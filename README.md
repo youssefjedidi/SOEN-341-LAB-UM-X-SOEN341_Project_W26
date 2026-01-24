@@ -14,9 +14,9 @@ MealMajor also provides a weekly meal planner that allows users to assign recipe
 
 - **Youssef Jedidi** (ID: [40234176]) - [Role]
 - **Rami Thabet** (ID: [40236685]) - [Role]
-- **[Member Name]** (ID: [ID]) - [Role]
-- **[Member Name]** (ID: [ID]) - [Role]
-- **[Member Name]** (ID: [ID]) - [Role]
+- **Ashley Samerev** (ID: [40273454]) - [Role]
+- **Mathias Vecchio** (ID: [40276964]) - [Role]
+- **Yana Vassilyev** (ID: [40270779]) - [Role]
 
 ## Sprint 1 Deliverables
 
