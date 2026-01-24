@@ -9,7 +9,7 @@ MealMajor is a web app for students to plan meals, track groceries, and propose 
 ## Team Members
 
 - **Youssef Jedidi** (ID: [40234176]) - [Role]
-- **[Member Name]** (ID: [ID]) - [Role]
+- **Rami Thabet** (ID: [40236685]) - [Role]
 - **[Member Name]** (ID: [ID]) - [Role]
 - **[Member Name]** (ID: [ID]) - [Role]
 - **[Member Name]** (ID: [ID]) - [Role]
