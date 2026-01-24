@@ -18,7 +18,7 @@ MealMajor is a web app for students to plan meals, track groceries, and propose 
 
 All deliverables for Sprint 1 can be found in the [sprint1_deliverables](./sprint1_deliverables) folder.
 
-- Sprint Plan
+- [Sprint Plan](./sprint1_deliverables/Sprint_Plan.md)
 - Meeting Minutes
 - Activity Logs
 
@@ -27,6 +27,7 @@ All deliverables for Sprint 1 can be found in the [sprint1_deliverables](./sprin
 - **Frontend:** React (Next.js App Router)
 - **Backend:** Next.js API Routes (Node.js)
 - **Database:** TBD
+- **Testing:** Jest (Logic Unit Tests)
 
 ## How to Run
 
@@ -67,26 +68,45 @@ In Next.js, the **folder structure** determines the URL.
 If you need a "function" to handle data (like checking a password), do this:
 
 - To create an endpoint `POST /api/auth/login`:
-  1. Create folder: `src/app/api/auth/login`
-  2. Create file: `src/app/api/auth/login/route.ts`
-  3. Paste this starter code:
 
-  ```ts
-  import { NextResponse } from "next/server";
+1. Create folder: `src/app/api/auth/login`
+2. Create file: `src/app/api/auth/login/route.ts`
+3. Paste this starter code:
 
-  export async function POST(request: Request) {
-    const body = await request.json(); // Like parsing JSON in C++
+```ts
+import { NextResponse } from "next/server";
 
-    // Your logic here (e.g., check DB)
-    if (body.email === "test@test.com") {
-      return NextResponse.json({ success: true });
-    }
+export async function POST(request: Request) {
+  const body = await request.json(); // Like parsing JSON in C++
 
-    return NextResponse.json({ error: "Invalid login" }, { status: 401 });
+  // Your logic here (e.g., check DB)
+  if (body.email === "test@test.com") {
+    return NextResponse.json({ success: true });
   }
-  ```
 
-### 3. Useful Commands
+  return NextResponse.json({ error: "Invalid login" }, { status: 401 });
+}
+```
+
+### 3. How to Write Tests (TDD)
+
+We use **Jest** for testing (similar to JUnit in the slides).
+**Strategy:** Only test pure logic functions (like validation). Do not test UI components yet.
+
+- Create a file ending in `.test.ts` (e.g., `src/logic.test.ts`):
+
+```ts
+import { isValid } from "./logic";
+
+describe("Validation Logic", () => {
+  it("checks password length", () => {
+    expect(isValid("12345")).toBe(true);
+  });
+});
+```
+
+### 4. Useful Commands
 
 - `npm run dev` - Starts the server (keeps running while you code).
+- `npm run test` - Runs all unit tests.
 - `Ctrl + C` - Stops the server.
