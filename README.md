@@ -4,7 +4,11 @@ SOEN 341: Software Process - Winter 2026
 
 ## Project Description
 
-MealMajor is a web app for students to plan meals, track groceries, and propose easy recipes. Our goal is ...
+MealMajor is a web-based meal planning and healthy living application designed to help students organize their meals and make healthier food choices. The application allows users to plan their weekly meals, manage recipes, and keep track of their dietary preferences in one centralized platform.
+
+The website is available to users who create an account and manage their personal profile. Users can customize their profiles by specifying dietary preferences and allergies. To manage meals, users can browse, create, edit, and delete recipes. Recipes include details such as ingredients, preparation steps, preparation time, cost, and dietary tags. Users can search and filter recipes based on factors such as time, difficulty, cost, and dietary restrictions.
+
+MealMajor also provides a weekly meal planner that allows users to assign recipes to specific days of the week and meal types such as breakfast, lunch, dinner, or snacks. Meals are displayed in a weekly grid, and users can edit or remove meals while preventing duplicate entries within the same week.
 
 ## Team Members
 
