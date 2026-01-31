@@ -12,12 +12,12 @@ MealMajor also provides a weekly meal planner that allows users to assign recipe
 
 ## Team Members
 
-- **Youssef Jedidi** (ID: [40234176]) - [Role]
-- **Rami Thabet** (ID: [40236685]) - [Role]
-- **Ashley Samerev** (ID: [40273454]) - [Role]
-- **Mathias Vecchio** (ID: [40276964]) - [Role]
-- **Yana Vassilyev** (ID: [40270779]) - [Role]
-- **Nicolas Correa-Vallenas** (ID: [40316184]) - [Role]
+- **Youssef Jedidi** (ID: [40234176]) - [Scrum Master]
+- **Rami Thabet** (ID: [40236685]) - [Member]
+- **Ashley Samerev** (ID: [40273454]) - [Member]
+- **Mathias Vecchio** (ID: [40276964]) - [Member]
+- **Yana Vassilyev** (ID: [40270779]) - [Member]
+- **Nicolas Correa-Vallenas** (ID: [40316184]) - [Member]
 
 ## Sprint 1 Deliverables
 
