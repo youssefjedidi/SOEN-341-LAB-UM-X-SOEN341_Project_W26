@@ -3,12 +3,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { formStyles, layoutStyles } from '@/lib/styles';
 
 export default function LoginPage() {
-
-const router = useRouter(); 
-const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500";
-const labelClass = "block text-base font-semibold text-gray-700 mb-2";
+    const router = useRouter();
 
 
 const [email, setEmail] = useState('');
@@ -51,45 +49,45 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 };
 return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
+    <div className={layoutStyles.pageContainer}>
+        <div className={layoutStyles.formCard}>
+            <h1 className={layoutStyles.pageTitle}>
                 Login to Your Account
             </h1>
 
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className={formStyles.errorBox}>
                     {error}
                 </div>
             )}
 
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className={labelClass} htmlFor="email">Email:</label>
+                    <label className={formStyles.label} htmlFor="email">Email:</label>
                     <input
-                        className = {inputClass}
-                        id = "email"
-                        type = "email"
-                        value = {email}
-                        onChange = {(e) => setEmail(e.target.value)}
+                        className={formStyles.input}
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className={labelClass} htmlFor="password">Password:</label>
+                    <label className={formStyles.label} htmlFor="password">Password:</label>
                     <input
-                        className = {inputClass}
-                        id = "password"
-                        type = "password"
-                        value = {password}
-                        onChange = {(e) => setPassword(e.target.value)}
+                        className={formStyles.input}
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
                 
                 
                 <button
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-mt6 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={formStyles.button}
                     type="submit"
                     disabled={loading}
                 >

@@ -1,19 +1,14 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
-
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { formStyles, layoutStyles } from '@/lib/styles';
 
 // Registration Page MealMajor
 // Basic profile info (email, username, password)
 export default function RegisterPage() {
-
-    const router = useRouter()
-
-    //Tailwind CSS design classes
-    const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500";
-    const labelClass = "block text-base font-semibold text-gray-700 mb-2";
+    const router = useRouter();
 
     //Form state
     const [email, setEmail] = useState('');
@@ -71,16 +66,16 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div className={layoutStyles.pageContainer}>
+            <div className={layoutStyles.formCard}>
 
-                <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">Registration</h1>
+                <h1 className={layoutStyles.pageTitle}>Create Your Account</h1>
                 <form onSubmit={handleSubmit}>
 
                     <div className="mb-4">
-                        <label className={labelClass} htmlFor="email">Email:</label>
+                        <label className={formStyles.label} htmlFor="email">Email:</label>
                         <input
-                            className={inputClass}
+                            className={formStyles.input}
                             id="email"
                             type="email"
                             value={email}
@@ -90,9 +85,9 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="mb-4">
-                        <label className={labelClass} htmlFor="username">Username:</label>
+                        <label className={formStyles.label} htmlFor="username">Username:</label>
                         <input
-                            className={inputClass}
+                            className={formStyles.input}
                             id="username"
                             type="text"
                             value={username}
@@ -102,9 +97,9 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="mb-4">
-                        <label className={labelClass} htmlFor="password">Password:</label>
+                        <label className={formStyles.label} htmlFor="password">Password:</label>
                         <input
-                            className={inputClass}
+                            className={formStyles.input}
                             id="password"
                             type="password"
                             value={password}
@@ -116,9 +111,9 @@ export default function RegisterPage() {
                         />
                     </div>
                     <div className="mb-4">
-                        <label className={labelClass} htmlFor="confirmPassword">Confirm Password:</label>
+                        <label className={formStyles.label} htmlFor="confirmPassword">Confirm Password:</label>
                         <input
-                            className={inputClass}
+                            className={formStyles.input}
                             id="confirmPassword"
                             type="password"
                             value={confirmPassword}
@@ -131,7 +126,7 @@ export default function RegisterPage() {
                     </div>
                     {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-                    <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg transition mt-6 disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={loading}>
+                    <button className={formStyles.button} type="submit" disabled={loading}>
                         {loading? 'Registering...' :'Register'}
                     </button>
                 </form>
