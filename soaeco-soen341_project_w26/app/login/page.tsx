@@ -96,7 +96,7 @@ return (
             </form>
 
             <p className="text-center text-sm text-gray-600 mt-4">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/register" className="text-emerald-500 hover:text-emerald-700 font-medium ">
                     Register here
                 </Link>
