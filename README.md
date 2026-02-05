@@ -30,16 +30,119 @@ All deliverables for Sprint 1 can be found in the [sprint1_deliverables](./sprin
 ## Tech Stack
 
 - **Frontend:** React (Next.js App Router)
-- **Backend:** Next.js API Routes (Node.js)
-- **Database:** TBD
+- **Backend:** Next.js API Routes (Node.js) + Supabase
+- **Database:** Supabase (PostgreSQL)
+- **Authentication:** Supabase Auth
 - **Testing:** Jest (Logic Unit Tests)
 
-## How to Run
+## Prerequisites
 
-1.  `cd soaeco-soen341_project_w26`
-2.  `npm install`
-3.  `npm run dev`
-4.  Open http://localhost:3000
+Before running the project, ensure you have:
+- **Node.js** 18.x or higher
+- **npm** or **yarn**
+- A **Supabase account** (free tier available at [supabase.com](https://supabase.com))
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/youssefjedidi/SOEN-341-LAB-UM-X-SOEN341_Project_W26.git
+cd SOEN-341-LAB-UM-X-SOEN341_Project_W26
+cd soaeco-soen341_project_w26
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Set Up Supabase
+
+#### Create a Supabase Project
+1. Go to [supabase.com](https://supabase.com) and sign up/login
+2. Click "New Project"
+3. Fill in:
+   - **Project Name:** MealMajor (or any name)
+   - **Database Password:** Choose a strong password
+   - **Region:** Choose closest to you
+4. Click "Create new project" (takes ~2 minutes)
+
+#### Get Your Supabase Credentials
+1. Once created, go to **Settings** (gear icon) → **API**
+2. Copy these two values:
+   - **Project URL** (looks like `https://xxxxx.supabase.co`)
+   - **anon/public key** (long string starting with `eyJ...`)
+
+#### Configure Email Authentication (Important!)
+1. Go to **Authentication** → **Providers** → **Email**
+2. **Disable** "Confirm email" (for development/testing)
+   - This allows users to register without email verification
+   - Re-enable this in production!
+3. Click "Save"
+
+### 4. Configure Environment Variables
+
+1. In the `soaeco-soen341_project_w26` folder, copy the example file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Open `.env.local` and add your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your-project-url-here
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+   ```
+
+   **Example:**
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://abcdefghijk.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   ```
+
+   ⚠️ **Important:** Never commit `.env.local` to Git! It's already in `.gitignore`.
+
+### 5. Run the Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 6. Test the Application
+
+1. **Register a new account:**
+   - Go to `/register`
+   - Fill in email, username, password
+   - Click "Register"
+
+2. **Login:**
+   - Go to `/login`
+   - Enter your credentials
+   - Click "Login"
+
+3. **Verify in Supabase:**
+   - Go to your Supabase project
+   - Click **Authentication** → **Users**
+   - You should see your registered user!
+
+## Quick Start (TL;DR)
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
+
+# 3. Run the app
+npm run dev
+
+# 4. Open http://localhost:3000
+```
 
 ---
 
