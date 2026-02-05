@@ -146,7 +146,53 @@ npm run dev
 
 ---
 
-## 📘 Developer Onboarding & Contribution Guide
+## � Troubleshooting
+
+### Issue: Turbopack Cache Corruption
+
+If you see errors like:
+```
+Failed to restore task data (corrupted database or bug)
+Unable to open static sorted file 00000001.sst
+```
+
+**Solution:** Clear the Next.js cache and restart:
+```bash
+# Stop the dev server (Ctrl+C)
+rm -rf .next
+npm run dev
+```
+
+### Issue: Can't Resolve 'tailwindcss' or Module Not Found
+
+If you see errors about missing modules from the parent directory:
+
+**Solution:** Ensure you're running commands from the correct directory:
+```bash
+# Always run from the project directory
+cd soaeco-soen341_project_w26
+npm install
+npm run dev
+```
+
+The repository root has a `.gitignore` to prevent accidental `package.json` files there.
+
+### Issue: Port Already in Use
+
+If you see `Port 3000 is in use`:
+- Next.js will automatically use port 3001 instead
+- Or manually kill the process: `lsof -ti:3000 | xargs kill`
+
+### Issue: Environment Variables Not Loading
+
+If authentication isn't working:
+1. Ensure `.env.local` exists in `soaeco-soen341_project_w26/`
+2. Restart the dev server after changing `.env.local`
+3. Check that variables start with `NEXT_PUBLIC_` for client-side access
+
+---
+
+## �📘 Developer Onboarding & Contribution Guide
 
 - **Documentation:** [Next.js Official Docs](https://nextjs.org/docs) - _Read this if you get stuck on Routing or API handling._
 - **File Structure:** Next.js uses a file-based routing system. Files in `src/app` correspond to URLs.
