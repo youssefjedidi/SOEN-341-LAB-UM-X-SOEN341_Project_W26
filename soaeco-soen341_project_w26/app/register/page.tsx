@@ -55,7 +55,7 @@ export default function RegisterPage() {
             console.log('User Registered:', data.user);
 
             // Redirect to login page 
-            router.push('/login');
+            router.push('/profile_management');
 
         } catch (error) {
             //Handle unexpected errors
