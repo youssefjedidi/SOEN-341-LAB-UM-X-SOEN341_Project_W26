@@ -71,12 +71,12 @@ export default function Home() {
         </p>
 
         <div className="space-y-3">
-          <Link href="/login">
+          <div className="mb-2"><Link href="/login">
             <button className={formStyles.button}>
               Login
             </button>
           </Link>
-          
+          </div>
           <Link href="/register">
             <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition">
               Create Account

@@ -39,7 +39,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     console.log('User Logged In:', data.user);
 
     // Redirect to home page
-    router.push('/');
+    router.push('/profile_management');
 
     } catch (error) {
         //Handle unexpected errors
