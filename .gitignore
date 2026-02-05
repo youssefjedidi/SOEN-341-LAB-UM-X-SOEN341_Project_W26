@@ -1,0 +1,15 @@
+# Root-level gitignore
+# Prevents accidental package files in the root directory
+# The actual project is in soaeco-soen341_project_w26/
+
+# Node.js
+node_modules/
+package-lock.json
+package.json
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

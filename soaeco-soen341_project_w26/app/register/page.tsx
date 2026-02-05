@@ -1,77 +1,88 @@
 'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { formStyles, layoutStyles } from '@/lib/styles';
 
-// Registration Page MealMajor
-// Basic profile info (email, username, password)
 export default function RegisterPage() {
     const router = useRouter();
 
-    //Form state
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false)
+    const [submitError, setSubmitError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    //Submission handler
-    const handleSubmit = async (e: React.FormEvent) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const passwordChecks = useMemo(() => ({
+        length: password.length >= 8,
+        upper: /[A-Z]/.test(password),
+        lower: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[!@#\$%\^&\*]/.test(password),
+    }), [password]);
+
+    const isPasswordValid = Object.values(passwordChecks).every(Boolean);
+    const isEmailValid = emailRegex.test(email);
+    const formValid = isEmailValid && username.trim().length > 0 && isPasswordValid && password === confirmPassword;
+
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        setSubmitError('');
 
-        // Validate passwords match
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
+        if (!isEmailValid) {
+            setSubmitError('Please enter a valid email address.');
             return;
         }
 
-        // Clear previous errors and start loading
-        setError('');
+        if (!isPasswordValid) {
+            setSubmitError('Password does not meet the required criteria.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setSubmitError('Passwords do not match.');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            // Call Supabase to Register the User
             const { data, error: signUpError } = await supabase.auth.signUp({
                 email: email,
                 password: password,
                 options: {
                     data: {
-                        username : username
+                        username: username
                     }
                 }
-            })
+            });
 
-            // check if registration failed
             if (signUpError) {
-                setError(signUpError.message);
+                setSubmitError(signUpError.message);
                 setLoading(false);
                 return;
             }
 
-            // Registration successful!
             console.log('User Registered:', data.user);
-
-            // Redirect to login page 
             router.push('/profile_management');
 
         } catch (error) {
-            //Handle unexpected errors
-            console.error("Regitration error:", error);
-            setError('An unexpected error occurred. Please try again.');
+            console.error("Registration error:", error);
+            setSubmitError('An unexpected error occurred. Please try again.');
             setLoading(false);
         }
-    };
+    }
 
     return (
         <div className={layoutStyles.pageContainer}>
             <div className={layoutStyles.formCard}>
-
                 <h1 className={layoutStyles.pageTitle}>Create Your Account</h1>
-                <form onSubmit={handleSubmit}>
 
+                <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className={formStyles.label} htmlFor="email">Email:</label>
                         <input
@@ -82,6 +93,9 @@ export default function RegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
+                        {!isEmailValid && email.length > 0 && (
+                            <p className="text-red-500 text-sm mt-1">Enter a valid email (e.g., user@example.com).</p>
+                        )}
                     </div>
 
                     <div className="mb-4">
@@ -103,13 +117,18 @@ export default function RegisterPage() {
                             id="password"
                             type="password"
                             value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value)
-                                setError('');
-                            }}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
+                        <div className="text-sm text-gray-700 mt-2">
+                            <p className={passwordChecks.length ? 'text-emerald-600' : 'text-gray-500'}>- At least 8 characters</p>
+                            <p className={passwordChecks.upper ? 'text-emerald-600' : 'text-gray-500'}>- One uppercase letter</p>
+                            <p className={passwordChecks.lower ? 'text-emerald-600' : 'text-gray-500'}>- One lowercase letter</p>
+                            <p className={passwordChecks.number ? 'text-emerald-600' : 'text-gray-500'}>- One number</p>
+                            <p className={passwordChecks.special ? 'text-emerald-600' : 'text-gray-500'}>- One special character (!@#$%^&*)</p>
+                        </div>
                     </div>
+
                     <div className="mb-4">
                         <label className={formStyles.label} htmlFor="confirmPassword">Confirm Password:</label>
                         <input
@@ -117,24 +136,28 @@ export default function RegisterPage() {
                             id="confirmPassword"
                             type="password"
                             value={confirmPassword}
-                            onChange={(e) => {
-                                setConfirmPassword(e.target.value)
-                                setError('');
-                            }}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                         />
+                        {confirmPassword.length > 0 && password !== confirmPassword && (
+                            <p className="text-red-500 text-sm mt-1">Passwords do not match.</p>
+                        )}
                     </div>
-                    {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-                    <button className={formStyles.button} type="submit" disabled={loading}>
-                        {loading? 'Registering...' :'Register'}
+                    {submitError && <p className="text-red-500 text-sm mb-4">{submitError}</p>}
+
+                    <button
+                        className={formStyles.button}
+                        type="submit"
+                        disabled={loading || !formValid}
+                    >
+                        {loading ? 'Registering...' : 'Register'}
                     </button>
                 </form>
 
                 <p className="text-center text-sm text-gray-600 mt-4">
                     Already have an account? <Link href="/login" className="text-emerald-500 hover:text-emerald-700 font-medium">Login here</Link>
                 </p>
-
             </div>
         </div>
     );
