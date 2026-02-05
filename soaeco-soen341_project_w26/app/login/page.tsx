@@ -1,10 +1,12 @@
 'use client';
+import { useRouter } from "next/navigation";
 import { useState } from 'react';
 
 export default function LoginPage() {
 
 const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500";
 const labelClass = "block text-base font-semibold text-gray-700 mb-2";
+const router = useRouter();
 
 
 const [email, setEmail] = useState('');
@@ -15,10 +17,12 @@ const handleSubmit = (e: React.FormEvent) => {
     console.log('Logging in user:', { email, password });
     
     // Backend Logic would go here
+    router.push("/profile_management");
 
 
 };
 return (
+    
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
