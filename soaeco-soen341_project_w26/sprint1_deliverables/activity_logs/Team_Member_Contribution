@@ -60,10 +60,10 @@ Features Implemented
 ## Team Member: Youssef Jedidi
 
 ###  Issues Closed
-- Issue #12 — Profile Backend Logic
-- Issue #11 — Profile Entry Validation
-- Issue #8 — Authentication Backend
-- Issue #5 — Registration Backend & Sessions
+- Issue #12 — Profile Backend Logic                                                 (1hr)
+- Issue #11 — Profile Entry Validation                                              (30min)
+- Issue #8 — Authentication Backend                                                 (45min)
+- Issue #5 — Registration Backend & Sessions                                        (45min)
 
 ### Features Implemented
 **Login Page (Frontend)**
@@ -71,3 +71,19 @@ Features Implemented
 - Persistent storage of user data
 - Session management for authenticated users
 - Data consistency maintained across requests
+
+## Team Member: Ashley Samerev
+
+###  Commits and General Contributions
+- Validation for Registration  password                                               (1hr15min)
+- Sprint planning spreadsheet organization                                            (1hr45min)
+- Task costing and distribution                                                       (30min)
+
+###  Issues Closed (Yana Vassilyev)
+- Issue #4 — Registration Input Validation
+
+Features Implemented
+**Registration Page Validation (Frontend)**
+- Real-time validation as the user types:
+- Email format is checked for validity
+- Password is validated against minimum security requirements
