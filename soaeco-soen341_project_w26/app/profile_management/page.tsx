@@ -59,21 +59,41 @@ export default function ProfileManagement() {
       loadPreferences();
    }, [user]);
 
-   // Handle checkbox toggle
+   // Handle checkbox toggle with "None" exclusivity
    const handleToggle = (value: string, type: 'restriction' | 'preference') => {
       if (type === 'restriction') {
-         if (restrictions.includes(value)) {
-            // Remove if already selected
-            setRestrictions(restrictions.filter(item => item !== value));
+         if (value === 'None') {
+            // If "None" is clicked, clear all other selections
+            if (restrictions.includes('None')) {
+               setRestrictions([]);
+            } else {
+               setRestrictions(['None']);
+            }
          } else {
-            // Add if not selected
-            setRestrictions([...restrictions, value]);
+            // If any other option is clicked, remove "None" and toggle the option
+            const withoutNone = restrictions.filter(item => item !== 'None');
+            if (withoutNone.includes(value)) {
+               setRestrictions(withoutNone.filter(item => item !== value));
+            } else {
+               setRestrictions([...withoutNone, value]);
+            }
          }
       } else {
-         if (preferences.includes(value)) {
-            setPreferences(preferences.filter(item => item !== value));
+         if (value === 'None') {
+            // If "None" is clicked, clear all other selections
+            if (preferences.includes('None')) {
+               setPreferences([]);
+            } else {
+               setPreferences(['None']);
+            }
          } else {
-            setPreferences([...preferences, value]);
+            // If any other option is clicked, remove "None" and toggle the option
+            const withoutNone = preferences.filter(item => item !== 'None');
+            if (withoutNone.includes(value)) {
+               setPreferences(withoutNone.filter(item => item !== value));
+            } else {
+               setPreferences([...withoutNone, value]);
+            }
          }
       }
    };
@@ -81,6 +101,16 @@ export default function ProfileManagement() {
    // Handle save button
    const handleSave = async () => {
       if (!user) return;
+
+      // Validation: Ensure at least one selection in each category
+      if (restrictions.length === 0) {
+         setError('Please select at least one dietary restriction (or "None")');
+         return;
+      }
+      if (preferences.length === 0) {
+         setError('Please select at least one dietary preference (or "None")');
+         return;
+      }
 
       setLoading(true);
       setError('');
