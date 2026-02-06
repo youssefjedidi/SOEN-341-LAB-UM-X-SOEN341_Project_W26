@@ -82,6 +82,11 @@ npm install
    - Re-enable this in production!
 3. Click "Save"
 
+#### Set Up Database Tables
+1. Follow the instructions in [`soaeco-soen341_project_w26/DATABASE_SETUP.md`](./soaeco-soen341_project_w26/DATABASE_SETUP.md)
+2. This creates the `user_profiles` table needed for profile management
+3. **Important:** Each team member must do this once in their own Supabase project
+
 ### 4. Configure Environment Variables
 
 1. In the `soaeco-soen341_project_w26` folder, copy the example file:
