@@ -59,4 +59,21 @@ Features Implemented
 - Login button   
 - Fully styled using Tailwind CSS  
 
+## Team Member: Ashley Samerev
+
+###  Commits and General Contributions
+- Validation for Registration  password                                               (1hr15min)
+- Sprint planning spreadsheet organization                                            (1hr45min)
+- Task costing and distribution                                                       (30min)
+
+###  Issues Closed (Yana Vassilyev)
+- Issue #4 — Registration Input Validation
+
+Features Implemented
+**Registration Page Validation (Frontend)**
+- Real-time validation as the user types:
+- Email format is checked for validity
+- Password is validated against minimum security requirements
+
+
 
