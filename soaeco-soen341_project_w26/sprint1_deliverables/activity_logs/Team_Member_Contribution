@@ -41,3 +41,21 @@ Features Implemented
 - Password is validated against minimum security requirements
 
 
+## Team Member: Rami Thabet
+
+###  Commits
+- Updated project description and team memeber roles in README 
+
+###  Issues Closed
+- Issue #7 — Login Page UI
+
+
+### Features Implemented
+**Login Page (Frontend)**
+- Input fields for:
+  - Email   
+  - Password  
+- Login button   
+- Fully styled using Tailwind CSS  
+
+
