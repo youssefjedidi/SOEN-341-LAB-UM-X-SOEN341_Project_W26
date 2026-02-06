@@ -52,10 +52,10 @@ Features Implemented
 ### Features Implemented
 **Login Page (Frontend)**
 - Input fields for:
-  - Email
-  - Password
-- Login button
-- Fully styled using Tailwind CSS
+  - Email   
+  - Password  
+- Login button   
+- Fully styled using Tailwind CSS  
 
 ## Team Member: Youssef Jedidi
 
