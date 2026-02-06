@@ -32,3 +32,19 @@ Features Implemented
 
 ###  Issues Closed
 - Issue #10 — Profile Management UI
+
+## Team Member: Rami Thabet
+
+###  Commits
+- Updated project description and team memeber roles in README (30min)
+- Created front end for the login page                         (3hr)
+
+###  Issues Closed
+- Issue #7 — Login Page UI
+Features Implemented
+**Login Page (Frontend)**                                    
+- Input fields for:
+  - Email   
+  - Password  
+- Login button   
+- Fully styled using Tailwind CSS  
