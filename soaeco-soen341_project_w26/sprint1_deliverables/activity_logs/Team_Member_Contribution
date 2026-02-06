@@ -1,27 +1,18 @@
 ## Team Member: Mathias Vecchio
 
 ###  Commits
-- Updated meeting minutes README formatting  
-- Added PDF template for meeting minutes  
-- Created and organized the minutes folder  (I created and take meeting minutes)
+- Updated meeting minutes README formatting                                          (5min)
+- Added PDF template for meeting minutes                                             (1hr)
+- Created and organized the minutes folder  (I create and take meeting minutes)      (1hr) 
 
 ###  Issues Closed
-- Issue #3 — Registration page implementation
-Features Implemented
-**Registration Page (Frontend)**
-- Input fields for:
-  - Email  
-  - Username  
-  - Password  
-- Submit button to register user information  
-- Button to redirect users to the login page  
-- Fully styled using Tailwind CSS  
+- Issue #3 — Registration page implementation                                        (3hr)
 
 ### Pull Requests Reviewed
-- Rerouting between Login & Registration pages  
-- Main page UI/UX aesthetic improvements  
-- Profile management features  
-- Backend sessions for login and registration  
+- Rerouting between Login & Registration pages                                       (5min)
+- Main page UI/UX aesthetic improvements                                             (5min)
+- Profile management features                                                        (20min)
+- Backend sessions for login and registration                                        (20min)
 
 ## Team Member: Nicolas Correa-Vallenas
 
