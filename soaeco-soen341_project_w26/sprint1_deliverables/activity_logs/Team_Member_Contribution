@@ -3,7 +3,7 @@
 ###  Commits
 - Updated meeting minutes README formatting                                          (5min)
 - Added PDF template for meeting minutes                                             (1hr)
-- Created and organized the minutes folder  (I create and take meeting minutes)      (1hr) 
+- Created and organized the minutes folder  (I create and take meeting minutes)      (1hr)
 
 ###  Issues Closed
 - Issue #3 — Registration page implementation                                        (3hr)
@@ -23,3 +23,21 @@
 
 ###  Issues Closed
 - Issue #10 — Profile Management UI
+
+## Team Member: Yana Vassilyev
+
+###  Commits and General Contributions
+- Validation for Registration                                                         (1hr)
+- Sprint planning organization                                                        (1hr30min)
+- Task costing and distribution                                                       (15min)
+
+###  Issues Closed
+- Issue #4 — Registration Input Validation
+
+Features Implemented
+**Registration Page Validation (Frontend)**
+- Real-time validation as the user types:
+- Email format is checked for validity
+- Password is validated against minimum security requirements
+
+
