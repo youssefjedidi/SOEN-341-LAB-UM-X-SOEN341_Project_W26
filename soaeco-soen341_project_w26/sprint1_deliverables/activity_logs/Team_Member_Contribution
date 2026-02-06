@@ -40,7 +40,6 @@ Features Implemented
 - Email format is checked for validity
 - Password is validated against minimum security requirements
 
-
 ## Team Member: Rami Thabet
 
 ###  Commits
@@ -50,13 +49,25 @@ Features Implemented
 ###  Issues Closed
 - Issue #7 — Login Page UI
 
-
 ### Features Implemented
 **Login Page (Frontend)**
 - Input fields for:
-  - Email   
-  - Password  
-- Login button   
-- Fully styled using Tailwind CSS  
+  - Email
+  - Password
+- Login button
+- Fully styled using Tailwind CSS
 
+## Team Member: Youssef Jedidi
 
+###  Issues Closed
+- Issue #12 — Profile Backend Logic
+- Issue #11 — Profile Entry Validation
+- Issue #8 — Authentication Backend
+- Issue #5 — Registration Backend & Sessions
+
+### Features Implemented
+**Login Page (Frontend)**
+- Database setup and configuration
+- Persistent storage of user data
+- Session management for authenticated users
+- Data consistency maintained across requests
