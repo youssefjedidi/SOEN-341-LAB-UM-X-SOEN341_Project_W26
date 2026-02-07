@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/useAuth';
+import { formStyles } from '@/lib/styles';
 
 // Available options
 const DIETARY_RESTRICTIONS = ['None', 'Halal', 'Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Nut Allergy'];
@@ -187,12 +188,12 @@ export default function ProfileManagement() {
 
             {/* Success/Error Messages */}
             {success && (
-               <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+               <div className={formStyles.successBox}>
                   {success}
                </div>
             )}
             {error && (
-               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+               <div className={formStyles.errorBox}>
                   {error}
                </div>
             )}

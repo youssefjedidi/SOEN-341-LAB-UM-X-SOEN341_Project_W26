@@ -13,6 +13,7 @@ const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const [error, setError] = useState('');
 const [loading, setLoading] = useState(false);
+const [resetSent, setResetSent] = useState(false);
 
 const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +49,34 @@ const handleSubmit = async (e: React.FormEvent) => {
         setLoading(false);
     }
 };
+
+const handleForgotPassword = async () => {
+    if (!email) {
+        setError('Please enter your email address first');
+        return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResetSent(false);
+
+    try {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/reset-password`,
+        });
+
+        if (resetError) {
+            setError(resetError.message);
+        } else {
+            setResetSent(true);
+        }
+    } catch (error) {
+        console.error('Password reset error:', error);
+        setError('Failed to send reset email. Please try again.');
+    } finally {
+        setLoading(false);
+    }
+};
 return (
     <div className={layoutStyles.pageContainer}>
         <div className={layoutStyles.formCard}>
@@ -58,6 +87,12 @@ return (
             {error && (
                 <div className={formStyles.errorBox}>
                     {error}
+                </div>
+            )}
+
+            {resetSent && (
+                <div className={formStyles.successBox}>
+                    Password reset email sent! Check your inbox.
                 </div>
             )}
 
@@ -85,6 +120,16 @@ return (
                     />
                 </div>
                 
+                <div className="flex justify-end mb-4">
+                    <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        className="text-sm text-emerald-600 hover:text-emerald-800 underline"
+                        disabled={loading}
+                    >
+                        Forgot Password?
+                    </button>
+                </div>
                 
                 <button
                     className={formStyles.button}
