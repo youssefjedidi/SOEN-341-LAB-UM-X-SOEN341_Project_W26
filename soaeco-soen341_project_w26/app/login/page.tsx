@@ -91,7 +91,7 @@ return (
             )}
 
             {resetSent && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                <div className={formStyles.successBox}>
                     Password reset email sent! Check your inbox.
                 </div>
             )}

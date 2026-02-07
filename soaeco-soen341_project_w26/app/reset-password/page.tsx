@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
             <div className={layoutStyles.pageContainer}>
                 <div className={layoutStyles.formCard}>
                     <div className="text-center">
-                        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                        <div className={formStyles.successBox}>
                             <h2 className="text-2xl font-bold mb-2">✅ Password Reset Successful!</h2>
                             <p>Redirecting to login page...</p>
                         </div>
