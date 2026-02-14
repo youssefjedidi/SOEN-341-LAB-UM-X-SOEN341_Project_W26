@@ -17,6 +17,7 @@ MealMajor also provides a weekly meal planner that allows users to assign recipe
 - **Ashley Samerev** (ID: [40273454]) - [Member]
 - **Mathias Vecchio** (ID: [40276964]) - [Member]
 - **Yana Vassilyev** (ID: [40270779]) - [Member]
+Background: Experience in Java Software development and cloud-native services, Databases, Agile workflow
 - **Nicolas Correa-Vallenas** (ID: [40316184]) - [Member]
 
 ## Sprint 1 Deliverables
