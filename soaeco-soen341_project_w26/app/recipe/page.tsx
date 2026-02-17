@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
 import { createRecipe } from "./actions";
+import {useAuth} from "@/lib/useAuth";
 
 export default function RecipePage() {
   const [prepTime, setPrepTime] = useState("");
@@ -14,6 +15,7 @@ export default function RecipePage() {
   const [prepSteps, setPrepSteps] = useState("");
   const [difficulty, setDifficulty] = useState(3);
 
+  const {user} = useAuth();
   const addIngredient = () => {
     if (ingeredientInput.trim() === "") return;
     setIngredients([...ingredients, ingeredientInput]);
@@ -24,19 +26,31 @@ export default function RecipePage() {
     setIngredients(ingredients.filter((_, i) => i !== idx));
   };
   const handleSubmit = async () => {
+    if (!user) {
+      console.error("User is not authenticated");
+      return;
+    }
     try {
-      await createRecipe({
+      const result = await createRecipe({
         title: recipeTitle,
         prep_time: Number(prepTime),
         ingredients,
         cost: Number(cost),
         prep_steps: prepSteps,
         difficulty,
+        user_id: user.id ,
       });
+
+      if (result.success) {
+        console.log("Recipe created successfully:", result.recipe);
+        alert("Recipe saved successfully!");
+      } else {
+        console.error("Error creating recipe:", result.error);
+        alert("Error: " + result.error);
+      }
       // Optionally, reset form or show success message
     } catch (error) {
-      console.error("Error creating recipe:", error);
-      // Optionally, show error message to user
+      console.error("Unexpected error:", error);
     }
   };
 

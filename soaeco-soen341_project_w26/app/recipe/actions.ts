@@ -1,7 +1,6 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
-import { use } from "react";
+import {  supabaseAdmin } from "@/lib/supabase";
 
 export const createRecipe = async (data: {
   title: string;
@@ -10,21 +9,16 @@ export const createRecipe = async (data: {
   cost: number;
   prep_steps: string;
   difficulty: number;
+  user_id: string;
 }) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error("User not authenticated");
-  }
-  const { data: recipe, error } = await supabase.from("recipes").insert({
+  const { data: recipe, error } = await supabaseAdmin.from("recipes").insert({
     title: data.title,
     prep_time: data.prep_time,
     ingredients: data.ingredients,
     cost: data.cost,
     preparation_steps: data.prep_steps,
     difficulty: data.difficulty,
-    user_id: user.id,
+    user_id: data.user_id,
   }).select().single();
 
   if (error) return { success: false, error: error.message };
@@ -33,13 +27,13 @@ export const createRecipe = async (data: {
 };
 
 export const getRecipes = async () => {
-  const { data: recipes, error } = await supabase.from("recipes").select("*");
+  const { data: recipes, error } = await supabaseAdmin.from("recipes").select("*");
   if (error) return { success: false, error: error.message };
   return { success: true, recipes };
 };
 
 export const deleteRecipe = async (id: string) => {
-  const { data, error } = await supabase.from("recipes").delete().eq("id", id);
+  const { data, error } = await supabaseAdmin.from("recipes").delete().eq("id", id);
   if (error) return { success: false, error: error.message };
   return { success: true, data };
 };
@@ -60,7 +54,7 @@ export const updateRecipe = async (
     updateData.preparation_steps = data.prep_steps;
     delete updateData.prep_steps;
   }
-  const { data: recipe, error } = await supabase
+  const { data: recipe, error } = await supabaseAdmin
     .from("recipes")
     .update(updateData)
     .eq("id", id);
