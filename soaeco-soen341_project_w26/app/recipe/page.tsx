@@ -1,14 +1,15 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
+import { createRecipe } from "./actions";
 
 export default function RecipePage() {
   const [prepTime, setPrepTime] = useState("");
   const [recipeTitle, setRecipeTitle] = useState("");
   const [ingeredientInput, setIngredientInput] = useState("");
   const [ingredients, setIngredients] = useState<string[]>([]);
-  const [costMode, setCostMode] = useState("");
+  // const [costMode, setCostMode] = useState("");
   const [cost, setCost] = useState("");
   const [prepSteps, setPrepSteps] = useState("");
   const [difficulty, setDifficulty] = useState(3);
@@ -22,13 +23,34 @@ export default function RecipePage() {
   const removeIngredient = (idx: number) => {
     setIngredients(ingredients.filter((_, i) => i !== idx));
   };
+  const handleSubmit = async () => {
+    try {
+      await createRecipe({
+        title: recipeTitle,
+        prep_time: Number(prepTime),
+        ingredients,
+        cost: Number(cost),
+        prep_steps: prepSteps,
+        difficulty,
+      });
+      // Optionally, reset form or show success message
+    } catch (error) {
+      console.error("Error creating recipe:", error);
+      // Optionally, show error message to user
+    }
+  };
 
   return (
     <div className={layoutStyles.pageContainer}>
       <div className={layoutStyles.formCard}>
         <h1 className={layoutStyles.pageTitle}>Create Recipe</h1>
 
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           {/* recipie title */}
           <div className="mb-4">
             <label className={formStyles.label}> Recipe Title </label>
@@ -142,7 +164,7 @@ export default function RecipePage() {
             </button>
 
             <button
-              type="button"
+              type="submit"
               className="flex-1 px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition"
             >
               Save Recipe
