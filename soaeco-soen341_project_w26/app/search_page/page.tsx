@@ -4,15 +4,24 @@ import { useRouter } from "next/navigation";
 import { layoutStyles, formStyles } from '@/lib/styles';
 import { useState } from "react";
 
+type Recipe = {
+    id: string;
+    title: string;
+    prep_time: number;
+    ingredients: string[];
+    cost: number;
+    prep_steps: string;
+    difficulty: number;
+};
 
 export default function SearchPage() {
     const router = useRouter();
-    const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
+    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
 
     {/* Mock recipe data, to be used for testing */ }
     {/* In the future, this should be replaced with an API call to fetch recipes based on the search */ }
-    const mockRecipes = [
+    const mockRecipes: Recipe[] = [
         {
             id: "1",
             title: "Chicken Stir Fry",
