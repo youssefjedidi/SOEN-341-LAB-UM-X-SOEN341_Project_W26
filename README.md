@@ -30,6 +30,14 @@ All deliverables for Sprint 1 can be found in the [sprint1_deliverables](./soaec
 - Meeting Minutes
 - Activity Logs
 
+- ## Sprint 2 Deliverables
+
+All deliverables for Sprint 2 can be found in the [sprint1_deliverables](./soaeco-soen341_project_w26/sprint1_deliverables) folder.
+
+- [Sprint Plan](https://docs.google.com/spreadsheets/d/1gFXMR4HFe72biDcg2fR8ZZdL18Ys39cnYYKRC7U_bZU/edit?gid=637351044#gid=637351044)
+- Meeting Minutes
+- Activity Logs
+
 ## Tech Stack
 
 - **Frontend:** React (Next.js App Router)
