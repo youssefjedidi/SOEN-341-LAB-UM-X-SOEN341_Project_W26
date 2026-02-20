@@ -7,8 +7,8 @@ import { useAuth } from '@/lib/useAuth';
 import { formStyles } from '@/lib/styles';
 
 // Available options
-const DIETARY_RESTRICTIONS = ['None', 'Halal', 'Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Nut Allergy'];
-const DIETARY_PREFERENCES = ['None', 'Tomatoes', 'Pickles', 'Lettuce', 'Onions', 'Mushrooms', 'Peppers', 'Olives'];
+const INITIAL_DIETARY_RESTRICTIONS = ['None', 'Halal', 'Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Nut Allergy', 'Shellfish Allergy', 'Kosher'];
+const INITIAL_DIETARY_PREFERENCES = ['None', 'Tomatoes', 'Pickles', 'Lettuce', 'Onions', 'Mushrooms', 'Peppers', 'Olives', 'Avocado', 'Spinach'];
 
 export default function ProfileManagement() {
    const router = useRouter();
@@ -17,6 +17,14 @@ export default function ProfileManagement() {
    // State for selected options
    const [restrictions, setRestrictions] = useState<string[]>([]);
    const [preferences, setPreferences] = useState<string[]>([]);
+
+   // State for dynamic options
+   const [restrictionOptions, setRestrictionOptions] = useState<string[]>(INITIAL_DIETARY_RESTRICTIONS);
+   const [preferenceOptions, setPreferenceOptions] = useState<string[]>(INITIAL_DIETARY_PREFERENCES);
+
+   // State for text inputs
+   const [newRestriction, setNewRestriction] = useState('');
+   const [newPreference, setNewPreference] = useState('');
 
    // State for UI feedback
    const [loading, setLoading] = useState(false);
@@ -37,7 +45,7 @@ export default function ProfileManagement() {
 
          const { data, error } = await supabase
             .from('user_profiles')
-            .select('dietary_restrictions, dietary_preferences')
+            .select('dietary_restrictions, dietary_preferences, custom_restrictions, custom_preferences')
             .eq('user_id', user.id)
             .single();
 
@@ -52,8 +60,17 @@ export default function ProfileManagement() {
          }
 
          if (data) {
-            setRestrictions(data.dietary_restrictions || []);
-            setPreferences(data.dietary_preferences || []);
+         const savedRestrictions = data.dietary_restrictions || [];
+         const savedPreferences = data.dietary_preferences || [];
+
+         const customRestrictions = data.custom_restrictions || [];
+         const customPreferences = data.custom_preferences || [];
+
+         setRestrictions(savedRestrictions);
+         setPreferences(savedPreferences);
+
+         setRestrictionOptions([...INITIAL_DIETARY_RESTRICTIONS, ...customRestrictions]);
+         setPreferenceOptions([...INITIAL_DIETARY_PREFERENCES, ...customPreferences]);
          }
       }
 
@@ -98,7 +115,66 @@ export default function ProfileManagement() {
          }
       }
    };
+   const addRestriction = async () => {
+      if (!user) return;
 
+   const value = newRestriction.trim();
+      if (!value) return;
+
+      if (value.toLowerCase() === 'none') return;
+      if (restrictionOptions.some(opt => opt.toLowerCase() === value.toLowerCase())) return;
+
+   // Build the next custom list (exclude the initial defaults)
+   const currentCustom = restrictionOptions.filter(x => !INITIAL_DIETARY_RESTRICTIONS.includes(x));
+   const nextCustom = [...currentCustom, value];
+
+   // Update UI immediately
+   setRestrictionOptions(prev => [...prev, value]);
+   setRestrictions(prev => {
+    const withoutNone = prev.filter(x => x !== 'None');
+    return [...withoutNone, value];
+   });
+   setNewRestriction('');
+
+   // Persist custom options
+   const { error } = await supabase
+    .from('user_profiles')
+    .upsert(
+      { user_id: user.id, custom_restrictions: nextCustom },
+      { onConflict: 'user_id' }
+    );
+
+   if (error) setError(error.message);
+   };
+
+   const addPreference = async () => {
+   if (!user) return;
+
+   const value = newPreference.trim();
+   if (!value) return;
+
+   if (value.toLowerCase() === 'none') return;
+   if (preferenceOptions.some(opt => opt.toLowerCase() === value.toLowerCase())) return;
+
+   const currentCustom = preferenceOptions.filter(x => !INITIAL_DIETARY_PREFERENCES.includes(x));
+   const nextCustom = [...currentCustom, value];
+
+   setPreferenceOptions(prev => [...prev, value]);
+   setPreferences(prev => {
+   const withoutNone = prev.filter(x => x !== 'None');
+   return [...withoutNone, value];
+   });
+   setNewPreference('');
+
+   const { error } = await supabase
+    .from('user_profiles')
+    .upsert(
+      { user_id: user.id, custom_preferences: nextCustom },
+      { onConflict: 'user_id' }
+   );
+
+   if (error) setError(error.message);
+   };
    // Handle save button
    const handleSave = async () => {
       if (!user) return;
@@ -152,6 +228,7 @@ export default function ProfileManagement() {
 
          setSuccess('Profile updated successfully!');
          setTimeout(() => setSuccess(''), 3000);
+         router.push('/search_page');
       } catch (err: unknown) {
          const errorMessage = err instanceof Error ? err.message : 'Failed to save preferences';
          setError(errorMessage);
@@ -162,7 +239,7 @@ export default function ProfileManagement() {
 
    // Handle cancel button
    const handleCancel = () => {
-      router.push('/');
+      router.push('/search_page');
    };
 
    // Show loading while checking authentication
@@ -180,8 +257,7 @@ export default function ProfileManagement() {
    }
 
    return (
-      <div className="min-h-screen flex justify-center py-16 bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-         <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-3xl">
+            <div className="h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100">         <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-3xl">
             <h1 className="text-4xl font-bold mb-6 text-gray-700 text-center">
                Profile Management
             </h1>
@@ -206,9 +282,8 @@ export default function ProfileManagement() {
                   <h2 className="text-xs text-gray-400 mb-3">
                      (eg. allergies, religious restrictions, etc.)
                   </h2>
-
-                  <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-96 overflow-y-auto">
-                     {DIETARY_RESTRICTIONS.map((item) => (
+                  <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-90 overflow-y-auto mb-3">
+                     {restrictionOptions.map((item) => (
                         <label key={item} className="flex items-center gap-4 cursor-pointer hover:bg-emerald-50 p-2 rounded">
                            <input
                               type="checkbox"
@@ -220,6 +295,18 @@ export default function ProfileManagement() {
                         </label>
                      ))}
                   </div>
+                  <div className="flex gap-2 mb-3">
+                  <input
+                  type="text"
+                  value={newRestriction}
+                  onChange={(e) => setNewRestriction(e.target.value)}
+                  placeholder="Add restriction..."
+                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"                  disabled={loading}
+                  />
+               <button type="button" onClick={addRestriction} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-lg transition disabled:opacity-50" disabled={loading}>
+               Add Restriction
+               </button>
+               </div>
                </div>
 
                {/* Dietary Preferences */}
@@ -228,9 +315,8 @@ export default function ProfileManagement() {
                   <h2 className="text-xs text-gray-400 mb-3">
                      (What you don&apos;t like to eat)
                   </h2>
-
-                  <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-96 overflow-y-auto">
-                     {DIETARY_PREFERENCES.map((item) => (
+                  <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-90 overflow-y-auto mb-3">
+                     {preferenceOptions.map((item) => (
                         <label key={item} className="flex items-center gap-4 cursor-pointer hover:bg-emerald-50 p-2 rounded">
                            <input
                               type="checkbox"
@@ -241,6 +327,24 @@ export default function ProfileManagement() {
                            <span>{item}</span>
                         </label>
                      ))}
+                  </div>
+                  <div className="flex gap-2 mb-3">
+                  <input
+                  type="text"
+                  value={newPreference}
+                  onChange={(e) => setNewPreference(e.target.value)}
+                  placeholder="Add preference..."
+                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  disabled={loading}
+                  />
+                  <button
+                  type="button"
+                  onClick={addPreference}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-lg transition disabled:opacity-50"
+                  disabled={loading}
+                  >   
+                  Add Preference
+                  </button>
                   </div>
                </div>
             </div>
