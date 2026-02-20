@@ -152,6 +152,7 @@ export default function ProfileManagement() {
 
          setSuccess('Profile updated successfully!');
          setTimeout(() => setSuccess(''), 3000);
+         router.push('/search_page');
       } catch (err: unknown) {
          const errorMessage = err instanceof Error ? err.message : 'Failed to save preferences';
          setError(errorMessage);
@@ -162,7 +163,7 @@ export default function ProfileManagement() {
 
    // Handle cancel button
    const handleCancel = () => {
-      router.push('/');
+      router.push('/search_page');
    };
 
    // Show loading while checking authentication
