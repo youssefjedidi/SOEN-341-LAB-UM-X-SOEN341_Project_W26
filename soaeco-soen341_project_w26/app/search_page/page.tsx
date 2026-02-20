@@ -17,6 +17,11 @@ type Recipe = {
 export default function SearchPage() {
     const router = useRouter();
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+    const [maxPrepTime, setMaxPrepTime] = useState('');
+    const [maxCost, setMaxCost] = useState('');
+    const [dietaryQuery, setDietaryQuery] = useState('');
+    const [ingredientQuery, setIngredientQuery] = useState('');
+    const [difficulty, setDifficulty] = useState(0); // 0 = any
 
 
     {/* Mock recipe data, to be used for testing */ }
@@ -96,9 +101,129 @@ export default function SearchPage() {
         },
     ];
 
+const normalize = (s: string) => s.trim().toLowerCase();
 
+const filteredRecipes = mockRecipes.filter((r) => {
+  if (maxPrepTime !== '') {
+    const t = Number(maxPrepTime);
+    if (!Number.isNaN(t) && r.prep_time > t) return false;
+  }
+
+  if (maxCost !== '') {
+    const c = Number(maxCost);
+    if (!Number.isNaN(c) && r.cost > c) return false;
+  }
+
+  if (difficulty > 0 && r.difficulty > difficulty) return false;
+
+  if (normalize(dietaryQuery) !== '') {
+    const q = normalize(dietaryQuery);
+    const hay = r.ingredients.map(normalize).join(' ');
+    if (!hay.includes(q)) return false;
+  }
+
+  if (normalize(ingredientQuery) !== '') {
+    const q = normalize(ingredientQuery);
+    const hay = r.ingredients.map(normalize).join(' ');
+    if (!hay.includes(q)) return false;
+  }
+
+  return true;
+});
 
     return (
+        <div className="relative w-screen min-h-screen">
+    {/* TOP BAR (spans screen) */}
+    <div className="absolute top-6 left-6 right-6 z-20">
+      <div className={`${layoutStyles.formCard} p-3`}>
+        <div className="flex items-end gap-3">
+  {/* Max time */}
+  <div className="col-span-1 flex flex-col">
+    <label className="text-xs text-gray-500">Max time</label>
+    <input
+      value={maxPrepTime}
+      onChange={(e) => setMaxPrepTime(e.target.value)}
+      inputMode="numeric"
+      placeholder="30"
+      className="border rounded-md px-2 py-1 text-sm w-full"
+    />
+  </div>
+
+  {/* Max price */}
+  <div className="col-span-1 flex flex-col">
+    <label className="text-xs text-gray-500">Max price</label>
+    <input
+      value={maxCost}
+      onChange={(e) => setMaxCost(e.target.value)}
+      inputMode="decimal"
+      placeholder="12"
+      className="border rounded-md px-2 py-1 text-sm w-full"
+    />
+  </div>
+
+  {/* Dietary restriction */}
+  <div className="col-span-2 flex flex-col">
+    <label className="text-xs text-gray-500">Restriction</label>
+    <input
+      value={dietaryQuery}
+      onChange={(e) => setDietaryQuery(e.target.value)}
+      placeholder="gluten"
+      className="border rounded-md px-2 py-1 text-sm w-full"
+    />
+  </div>
+
+  {/* Ingredient */}
+  <div className="col-span-2 flex flex-col">
+    <label className="text-xs text-gray-500">Ingredient</label>
+    <input
+      value={ingredientQuery}
+      onChange={(e) => setIngredientQuery(e.target.value)}
+      placeholder="garlic"
+      className="border rounded-md px-2 py-1 text-sm w-full"
+    />
+  </div>
+
+  {/* Difficulty */}
+  <div className="col-span-1 flex flex-col">
+    <label className="text-xs text-gray-500">Difficulty</label>
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((d) => (
+        <button
+          key={d}
+          type="button"
+          onClick={() => setDifficulty(difficulty === d ? 0 : d)}
+          className={`px-2 py-1 rounded-md text-sm border ${
+            difficulty >= d
+              ? "bg-emerald-600 text-white border-emerald-700"
+              : "bg-white text-gray-700"
+          }`}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {/* Clear button */}
+  <div className="col-span-1 flex flex-col">
+    <label className="text-xs text-transparent">.</label>
+    <button
+      type="button"
+      onClick={() => {
+        setMaxPrepTime('');
+        setMaxCost('');
+        setDietaryQuery('');
+        setIngredientQuery('');
+        setDifficulty(0);
+      }}
+      className="text-sm border rounded-md px-3 py-1 hover:bg-gray-50 w-full"
+    >
+      Clear
+    </button>
+  </div>
+</div>
+      </div>
+    </div>
         <div className={`${layoutStyles.pageContainer} relative`}>
 
             {/* Search bar */}
@@ -106,11 +231,11 @@ export default function SearchPage() {
             {/* Recipe listing */}
             <div className="absolute top-24 left-6 w-150">
                 <div
-                    className={`${layoutStyles.formCard} max-h-[75vh] overflow-y-auto`}
+                    className={`${layoutStyles.formCard} max-h-[65vh] overflow-y-auto`}
                     dir="rtl"   // scrollbar on the left
                 >
                     <ul className="space-y-3" dir="ltr">
-                        {mockRecipes.map((recipe) => (
+                        {filteredRecipes.map((recipe) => (
 
                             <li
                                 key={recipe.id}
@@ -187,6 +312,7 @@ export default function SearchPage() {
             </div>
 
         </div>
+    </div>
     );
 
 }
