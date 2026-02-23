@@ -11,7 +11,7 @@ export default function RecipePage() {
   const [costMode, setCostMode] = useState("");
   const [cost, setCost] = useState("");
   const [prepSteps, setPrepSteps] = useState("");
-  const [difficulty, setDifficulty] = useState(3);
+  const [difficulty, setDifficulty] = useState(3); //validated
 
   const addIngredient = () => {
     if (ingeredientInput.trim() === "") return;
