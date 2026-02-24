@@ -37,11 +37,19 @@ export const formStyles = {
 // Page layout styles
 export const layoutStyles = {
   // Full page container
-  pageContainer: "min-h-screen bg-[#FDFBF7] text-stone-800 font-sans selection:bg-orange-200 flex flex-col items-center justify-center p-6",
+  pageContainer: "min-h-screen bg-[#FDFBF7] text-stone-800 font-sans selection:bg-orange-200 flex flex-col items-center justify-center p-6 pt-28",
   
   // Form card/box
   formCard: "bg-white border-2 border-stone-900 rounded-[28px] p-8 md:p-12 shadow-[8px_8px_0px_#1c1917] w-full max-w-md relative",
   
   // Page title
   pageTitle: "text-3xl font-black mb-8 text-stone-900 uppercase tracking-wide border-b-4 border-stone-900 pb-4 inline-block",
+
+  // Navigation Container (Fixed at top-right)
+  navContainer: "fixed top-6 right-6 z-50 bg-stone-50 border-2 border-stone-900 p-2 rounded-2xl shadow-[4px_4px_0px_#1c1917] flex gap-2",
+
+  // Navigation Items
+  navBase: "px-4 py-3 text-center text-[10px] md:text-xs font-black uppercase tracking-widest transition-all rounded-xl",
+  navActive: "bg-stone-900 border-2 border-stone-900 text-white shadow-[2px_2px_0px_#E2725B] -translate-y-1",
+  navInactive: "bg-white border-2 border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900 hover:shadow-[2px_2px_0px_#1c1917] hover:-translate-y-1",
 };
