@@ -281,6 +281,9 @@ export default function RecipePage() {
                         const res = await deleteRecipe(recipe.id);
                         if (res.success) {
                           loadRecipes();
+                          if (editingRecipeId === recipe.id) {
+                            resetForm();
+                          }
                         } else {
                           alert("Failed to delete recipe: " + res.error);
                         }
