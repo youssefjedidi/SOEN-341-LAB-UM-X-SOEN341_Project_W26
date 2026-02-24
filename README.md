@@ -30,7 +30,7 @@ All deliverables for Sprint 1 can be found in the [sprint1_deliverables](./soaec
 - Meeting Minutes
 - Activity Logs
 
-- ## Sprint 2 Deliverables
+## Sprint 2 Deliverables
 
 All deliverables for Sprint 2 can be found in the [sprint1_deliverables](./soaeco-soen341_project_w26/sprint1_deliverables) folder.
 
