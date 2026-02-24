@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
-import { createRecipe } from "./actions";
-import {useAuth} from "@/lib/useAuth";
+import { createRecipe, getRecipes, deleteRecipe, updateRecipe } from "./actions";
+import { useAuth } from "@/lib/useAuth";
 
 export default function RecipePage() {
   const [prepTime, setPrepTime] = useState("");
@@ -16,6 +16,24 @@ export default function RecipePage() {
   const [difficulty, setDifficulty] = useState(3);
 
   const {user} = useAuth();
+
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
+
+  const loadRecipes = async () => {
+    const result = await getRecipes();
+    if (result.success && result.recipes) {
+      // Filter for current user
+      setRecipes(result.recipes.filter((r: any) => r.user_id === user?.id));
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadRecipes();
+    }
+  }, [user]);
+
   const addIngredient = () => {
     if (ingeredientInput.trim() === "") return;
     setIngredients([...ingredients, ingeredientInput]);
@@ -31,6 +49,27 @@ export default function RecipePage() {
       return;
     }
     try {
+      if (editingRecipeId) {
+        const result = await updateRecipe(editingRecipeId, {
+          title: recipeTitle,
+          prep_time: Number(prepTime),
+          ingredients,
+          cost: Number(cost),
+          prep_steps: prepSteps,
+          difficulty,
+        });
+
+        if (result.success) {
+          alert("Recipe updated successfully!");
+          resetForm();
+          loadRecipes();
+        } else {
+          console.error("Error updating recipe:", result.error);
+          alert("Error: " + result.error);
+        }
+        return;
+      }
+
       const result = await createRecipe({
         title: recipeTitle,
         prep_time: Number(prepTime),
@@ -44,6 +83,8 @@ export default function RecipePage() {
       if (result.success) {
         console.log("Recipe created successfully:", result.recipe);
         alert("Recipe saved successfully!");
+        resetForm();
+        loadRecipes();
       } else {
         console.error("Error creating recipe:", result.error);
         alert("Error: " + result.error);
@@ -54,10 +95,31 @@ export default function RecipePage() {
     }
   };
 
+  const resetForm = () => {
+    setRecipeTitle("");
+    setPrepTime("");
+    setIngredients([]);
+    setIngredientInput("");
+    setCost("");
+    setPrepSteps("");
+    setDifficulty(3);
+    setEditingRecipeId(null);
+  };
+
+  const handleEdit = (recipe: any) => {
+    setEditingRecipeId(recipe.id);
+    setRecipeTitle(recipe.title);
+    setPrepTime(recipe.prep_time?.toString() || "");
+    setIngredients(recipe.ingredients || []);
+    setCost(recipe.cost?.toString() || "");
+    setPrepSteps(recipe.preparation_steps || "");
+    setDifficulty(recipe.difficulty || 3);
+  };
+
   return (
     <div className={layoutStyles.pageContainer}>
       <div className={layoutStyles.formCard}>
-        <h1 className={layoutStyles.pageTitle}>Create Recipe</h1>
+        <h1 className={layoutStyles.pageTitle}>{editingRecipeId ? "Edit Recipe" : "Create Recipe"}</h1>
 
         <form
           onSubmit={(e) => {
@@ -172,6 +234,7 @@ export default function RecipePage() {
           <div className="flex justify-between gap-4 mt-6">
             <button
               type="button"
+              onClick={resetForm}
               className="flex-1 px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Cancel
@@ -181,10 +244,57 @@ export default function RecipePage() {
               type="submit"
               className="flex-1 px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition"
             >
-              Save Recipe
+              {editingRecipeId ? "Update Recipe" : "Save Recipe"}
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Recipe List */}
+      <div className="mt-8 max-w-4xl w-full">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">My Recipes</h2>
+        {recipes.length === 0 ? (
+          <p className="text-gray-500">No recipes found. Create one above!</p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {recipes.map((recipe) => (
+              <div key={recipe.id} className="bg-white p-4 rounded-lg shadow-md border border-emerald-100 flex flex-col">
+                <h3 className="text-xl font-bold text-emerald-800 mb-2">{recipe.title}</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  Prep: {recipe.prep_time}m | Cost: ${recipe.cost} | Difficulty: {recipe.difficulty}/5
+                </p>
+                <div className="flex flex-wrap gap-1 mb-4 flex-grow">
+                  {recipe.ingredients?.map((ing: string, i: number) => (
+                    <span key={i} className="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full">{ing}</span>
+                  ))}
+                </div>
+                <div className="flex justify-end gap-2 mt-auto">
+                  <button 
+                    onClick={() => handleEdit(recipe)}
+                    className="px-3 py-1 bg-blue-100 text-blue-700 font-medium rounded hover:bg-blue-200 transition"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      if (confirm("Are you sure you want to delete this recipe?")) {
+                        const res = await deleteRecipe(recipe.id);
+                        if (res.success) {
+                          loadRecipes();
+                        } else {
+                          alert("Failed to delete recipe: " + res.error);
+                        }
+                      }
+                    }}
+                    className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded hover:bg-red-200 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
