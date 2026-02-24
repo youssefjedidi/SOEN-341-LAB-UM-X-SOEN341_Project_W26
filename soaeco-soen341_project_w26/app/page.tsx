@@ -50,7 +50,7 @@ export default function Home() {
 
             <button
               onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition"
+              className={formStyles.dangerButton + " w-full mt-4"}
             >
               Logout
             </button>
@@ -66,19 +66,18 @@ export default function Home() {
       <div className={layoutStyles.formCard}>
         <h1 className={layoutStyles.pageTitle}>Welcome to MealMajor</h1>
         
-        <p className="text-center text-gray-600 mb-6">
+        <p className={formStyles.helperText + " mt-0 mb-8 lowercase text-sm"}>
           Please log in or create an account to continue
         </p>
 
-        <div className="space-y-3">
-          <div className="mb-2"><Link href="/login">
+        <div className="space-y-4">
+          <Link href="/login" className="block">
             <button className={formStyles.button}>
               Login
             </button>
           </Link>
-          </div>
-          <Link href="/register">
-            <button className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition">
+          <Link href="/register" className="block">
+            <button className={formStyles.secondaryButton + " w-full block text-center"}>
               Create Account
             </button>
           </Link>

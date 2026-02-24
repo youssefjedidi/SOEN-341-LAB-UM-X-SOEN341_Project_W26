@@ -115,11 +115,11 @@ export default function SearchPage() {
                             <li
                                 key={recipe.id}
                                 onClick={() => setSelectedRecipe(recipe)}
-                                className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer shadow-sm"
+                                className={formStyles.cardListItem}
                             >
-                                <h2 className="font-semibold text-lg text-gray-900">{recipe.title}</h2>
-                                <p className="text-sm text-gray-600">
-                                    Prep: {recipe.prep_time} min • Difficulty: {recipe.difficulty}/5 • Cost: ${recipe.cost}
+                                <h2 className="font-black text-xl mb-1">{recipe.title}</h2>
+                                <p className={formStyles.label + " mb-0"}>
+                                    ⏱ {recipe.prep_time} min • ⭐ {recipe.difficulty}/5 • 💰 ${recipe.cost}
                                 </p>
                             </li>
                         ))}
@@ -129,24 +129,24 @@ export default function SearchPage() {
 
             {/* Recipe details panel */}
             <div className="absolute top-24 right-6 w-[45%]">
-                <div className={layoutStyles.formCard}>
+                <div className={layoutStyles.formCard + " !max-w-none"}>
                     {!selectedRecipe ? (
-                        <p className="text-gray-500 text-center">
+                        <p className={formStyles.helperText + " mt-0 normal-case"}>
                             Select a recipe to view its details.
                         </p>
                     ) : (
                         <>
-                            <h2 className="text-3xl font-bold text-center mb-3 text-gray-900">
+                            <h2 className={layoutStyles.pageTitle + " w-full text-center"}>
                                 {selectedRecipe.title}
                             </h2>
 
-                            <p className="text-md text-gray-600 mb-4 text-center">
-                                Prep: {selectedRecipe.prep_time} min • Difficulty: {selectedRecipe.difficulty}/5 • Cost: ${selectedRecipe.cost}
+                            <p className={formStyles.label + " text-center mb-6"}>
+                                ⏱ {selectedRecipe.prep_time}m • ⭐ Level {selectedRecipe.difficulty} • 💰 ${selectedRecipe.cost}
                             </p>
 
-                            <div className="mb-4">
-                                <h3 className="font-semibold text-lg text-gray-900">Ingredients</h3>
-                                <ul className="list-disc list-inside text-gray-700">
+                            <div className="mb-6">
+                                <h3 className={formStyles.label}>Ingredients</h3>
+                                <ul className="list-disc list-inside text-stone-700 font-bold space-y-1">
                                     {selectedRecipe.ingredients.map((ing: string, idx: number) => (
 
                                         <li key={idx}>{ing}</li>
@@ -155,8 +155,8 @@ export default function SearchPage() {
                             </div>
 
                             <div>
-                                <h3 className="font-semibold text-lg text-gray-900">Preparation Steps</h3>
-                                <p className="text-gray-700 whitespace-pre-line">
+                                <h3 className={formStyles.label}>Preparation Steps</h3>
+                                <p className="text-stone-700 font-bold whitespace-pre-line leading-relaxed">
                                     {selectedRecipe.prep_steps}
                                 </p>
                             </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/useAuth';
-import { formStyles } from '@/lib/styles';
+import { formStyles, layoutStyles } from '@/lib/styles';
 
 // Available options
 const INITIAL_DIETARY_RESTRICTIONS = ['None', 'Halal', 'Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Nut Allergy', 'Shellfish Allergy', 'Kosher'];
@@ -257,8 +257,9 @@ export default function ProfileManagement() {
    }
 
    return (
-            <div className="h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-emerald-100">         <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-3xl">
-            <h1 className="text-4xl font-bold mb-6 text-gray-700 text-center">
+      <div className={layoutStyles.pageContainer}>
+         <div className={layoutStyles.formCard + " !max-w-3xl"}>
+            <h1 className={layoutStyles.pageTitle + " text-center block"}>
                Profile Management
             </h1>
 
@@ -295,16 +296,17 @@ export default function ProfileManagement() {
                         </label>
                      ))}
                   </div>
-                  <div className="flex gap-2 mb-3">
+                  <div className="flex gap-3 mb-3">
                   <input
                   type="text"
                   value={newRestriction}
                   onChange={(e) => setNewRestriction(e.target.value)}
                   placeholder="Add restriction..."
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"                  disabled={loading}
-                  />
-               <button type="button" onClick={addRestriction} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-lg transition disabled:opacity-50" disabled={loading}>
-               Add Restriction
+                  className={formStyles.input + " flex-1 !w-auto !py-2 !px-4 !text-sm"}
+                  disabled={loading}
+                  /> 
+               <button type="button" onClick={addRestriction} className={formStyles.button + " flex-none !w-auto !py-2 !px-6 !text-xs"} disabled={loading}>
+               Add
                </button>
                </div>
                </div>
@@ -328,31 +330,31 @@ export default function ProfileManagement() {
                         </label>
                      ))}
                   </div>
-                  <div className="flex gap-2 mb-3">
+                  <div className="flex gap-3 mb-3">
                   <input
                   type="text"
                   value={newPreference}
                   onChange={(e) => setNewPreference(e.target.value)}
                   placeholder="Add preference..."
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className={formStyles.input + " flex-1 !w-auto !py-2 !px-4 !text-sm"}
                   disabled={loading}
                   />
                   <button
                   type="button"
                   onClick={addPreference}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-lg transition disabled:opacity-50"
+                  className={formStyles.button + " flex-none !w-auto !py-2 !px-6 !text-xs"}
                   disabled={loading}
                   >   
-                  Add Preference
+                  Add
                   </button>
                   </div>
                </div>
             </div>
 
             {/* Buttons */}
-            <div className="flex justify-end items-end w-full mt-4 gap-2">
+            <div className="flex w-full mt-8 gap-4 border-t-2 border-emerald-100 pt-6">
                <button
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={formStyles.button + " !w-auto !flex-[2] !mt-0 !py-3"}
                   onClick={handleSave}
                   disabled={loading}
                >
@@ -360,7 +362,7 @@ export default function ProfileManagement() {
                </button>
 
                <button
-                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                  className={formStyles.secondaryButton + " !w-auto !flex-1 !mt-0 !py-3 bg-white"}
                   onClick={handleCancel}
                   disabled={loading}
                >
