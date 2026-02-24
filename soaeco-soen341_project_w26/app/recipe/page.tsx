@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
 import { createRecipe, getRecipes, deleteRecipe, updateRecipe } from "./actions";
 import { useAuth } from "@/lib/useAuth";
+import { Recipe } from "@/lib/types";
+import { useCallback } from "react";
 
 export default function RecipePage() {
   const [prepTime, setPrepTime] = useState("");
@@ -16,22 +18,32 @@ export default function RecipePage() {
   const [difficulty, setDifficulty] = useState(3);
 
   const {user} = useAuth();
-
-  const [recipes, setRecipes] = useState<any[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
 
-  const loadRecipes = async () => {
+  const loadRecipes = useCallback(async () => {
+    if (!user) return;
     const result = await getRecipes();
     if (result.success && result.recipes) {
       // Filter for current user
-      setRecipes(result.recipes.filter((r: any) => r.user_id === user?.id));
+      setRecipes(result.recipes.filter((r: Recipe) => r.user_id === user.id));
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    if (user) {
-      loadRecipes();
+    let ignore = false;
+    async function startFetching() {
+      const result = await getRecipes();
+      if (!ignore && result.success && result.recipes && user) {
+        setRecipes(result.recipes.filter((r: Recipe) => r.user_id === user.id));
+      }
     }
+    if (user) {
+      startFetching();
+    }
+    return () => {
+      ignore = true;
+    };
   }, [user]);
 
   const addIngredient = () => {
@@ -106,7 +118,7 @@ export default function RecipePage() {
     setEditingRecipeId(null);
   };
 
-  const handleEdit = (recipe: any) => {
+  const handleEdit = (recipe: Recipe) => {
     setEditingRecipeId(recipe.id);
     setRecipeTitle(recipe.title);
     setPrepTime(recipe.prep_time?.toString() || "");

@@ -8,5 +8,5 @@ const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY!
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Create a supabase admin client
-export const supabaseAdmin = typeof window === 'undefined' && process.env.SUPABASE_SECRET_KEY ? createClient(supabaseUrl, supabaseSecretKey) : ( null as any);
+export const supabaseAdmin = typeof window === 'undefined' && process.env.SUPABASE_SECRET_KEY ? createClient(supabaseUrl, supabaseSecretKey) : null;
 
