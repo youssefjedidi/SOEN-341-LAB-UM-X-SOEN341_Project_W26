@@ -175,7 +175,7 @@ export default function RecipePage() {
               <button
                 type="button"
                 onClick={addIngredient}
-                className="px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
+                className={formStyles.secondaryButton + " !py-2 !px-4 !flex-none"}
               >
                 Add
               </button>
@@ -192,7 +192,7 @@ export default function RecipePage() {
                     <button
                       type="button"
                       onClick={() => removeIngredient(idx)}
-                      className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                      className={formStyles.dangerButton + " !flex-none !py-1 !px-2"}
                     >
                       Remove
                     </button>
@@ -247,14 +247,14 @@ export default function RecipePage() {
             <button
               type="button"
               onClick={resetForm}
-              className="flex-1 px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+              className={formStyles.secondaryButton}
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="flex-1 px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition"
+              className={formStyles.button + " !w-auto !flex-1"}
             >
               {editingRecipeId ? "Update Recipe" : "Save Recipe"}
             </button>
@@ -283,7 +283,7 @@ export default function RecipePage() {
                 <div className="flex justify-end gap-2 mt-auto">
                   <button 
                     onClick={() => handleEdit(recipe)}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 font-medium rounded hover:bg-blue-200 transition"
+                    className={formStyles.secondaryButton + " !py-1 !px-3 !flex-none"}
                   >
                     Edit
                   </button>
@@ -301,7 +301,7 @@ export default function RecipePage() {
                         }
                       }
                     }}
-                    className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded hover:bg-red-200 transition"
+                    className={formStyles.dangerButton + " !py-1 !px-3 !flex-none"}
                   >
                     Delete
                   </button>

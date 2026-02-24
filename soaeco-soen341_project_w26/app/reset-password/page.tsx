@@ -132,11 +132,11 @@ export default function ResetPasswordPage() {
                     </button>
                 </form>
 
-                <p className="text-center text-sm text-gray-600 mt-4">
+                <p className={formStyles.helperText}>
                     Remember your password?{' '}
                     <button
                         onClick={() => router.push('/login')}
-                        className="text-emerald-500 hover:text-emerald-700 font-medium underline"
+                        className={formStyles.link}
                     >
                         Back to Login
                     </button>

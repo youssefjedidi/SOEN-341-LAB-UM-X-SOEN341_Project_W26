@@ -124,7 +124,7 @@ return (
                     <button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="text-sm text-emerald-600 hover:text-emerald-800 underline"
+                        className={formStyles.link + " text-sm font-normal"}
                         disabled={loading}
                     >
                         Forgot Password?
@@ -140,9 +140,9 @@ return (
                 </button>
             </form>
 
-            <p className="text-center text-sm text-gray-600 mt-4">
+            <p className={formStyles.helperText}>
                 Don&apos;t have an account?{' '}
-                <Link href="/register" className="text-emerald-500 hover:text-emerald-700 font-medium ">
+                <Link href="/register" className={formStyles.link}>
                     Register here
                 </Link>
             </p>

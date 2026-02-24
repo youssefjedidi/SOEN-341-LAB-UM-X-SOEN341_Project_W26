@@ -155,8 +155,8 @@ export default function RegisterPage() {
                     </button>
                 </form>
 
-                <p className="text-center text-sm text-gray-600 mt-4">
-                    Already have an account? <Link href="/login" className="text-emerald-500 hover:text-emerald-700 font-medium">Login here</Link>
+                <p className={formStyles.helperText}>
+                    Already have an account? <Link href="/login" className={formStyles.link}>Login here</Link>
                 </p>
             </div>
         </div>
