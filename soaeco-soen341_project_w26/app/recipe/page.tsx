@@ -17,6 +17,10 @@ export default function RecipePage() {
   const [prepSteps, setPrepSteps] = useState("");
   const [difficulty, setDifficulty] = useState(3);
 
+  const [titleError, setTitleError] = useState("");
+  const [ingredientsError, setIngredientsError] = useState("");
+  const [stepsError, setStepsError] = useState("");
+
   const {user} = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
@@ -50,6 +54,8 @@ export default function RecipePage() {
     if (ingeredientInput.trim() === "") return;
     setIngredients([...ingredients, ingeredientInput]);
     setIngredientInput("");
+
+     if (ingredientsError) setIngredientsError("");
   };
 
   const removeIngredient = (idx: number) => {
@@ -60,6 +66,16 @@ export default function RecipePage() {
       console.error("User is not authenticated");
       return;
     }
+    const titleOk = recipeTitle.trim() !== "";
+    const ingredientsOk = ingredients.length > 0;
+    const stepsOk = prepSteps.trim() !== "";
+
+    setTitleError(titleOk ? "" : "Title cannot be empty");
+    setIngredientsError(ingredientsOk ? "" : "Ingredients cannot be empty");
+    setStepsError(stepsOk ? "" : "Instructions cannot be empty");
+
+    if (!titleOk || !ingredientsOk || !stepsOk) return;
+    
     try {
       if (editingRecipeId) {
         const result = await updateRecipe(editingRecipeId, {
@@ -116,6 +132,11 @@ export default function RecipePage() {
     setPrepSteps("");
     setDifficulty(3);
     setEditingRecipeId(null);
+
+    setTitleError("");
+    setIngredientsError("");
+    setStepsError("");
+
   };
 
   const handleEdit = (recipe: Recipe) => {
@@ -139,7 +160,7 @@ export default function RecipePage() {
             handleSubmit();
           }}
         >
-          {/* recipie title */}
+          {/* recipe title */}
           <div className="mb-4">
             <label className={formStyles.label}> Recipe Title </label>
             <input
@@ -148,6 +169,7 @@ export default function RecipePage() {
               value={recipeTitle}
               onChange={(e) => setRecipeTitle(e.target.value)}
             />
+            {titleError && <p className="text-red-600 text-sm mt-1">{titleError}</p>}  
           </div>
           {/* Prep Time */}
           <div className="mb-4">
@@ -180,7 +202,7 @@ export default function RecipePage() {
                 Add
               </button>
             </div>
-
+            {ingredientsError && <p className="text-red-600 text-sm mt-1">{ingredientsError}</p>}
             {ingredients.length > 0 && (
               <ul className="mt-3 space-y-2">
                 {ingredients.map((ing, idx) => (
@@ -224,6 +246,7 @@ export default function RecipePage() {
               value={prepSteps}
               onChange={(e) => setPrepSteps(e.target.value)}
             />
+             {stepsError && <p className="text-red-600 text-sm mt-1">{stepsError}</p>}
           </div>
 
           {/* Difficulty */}
