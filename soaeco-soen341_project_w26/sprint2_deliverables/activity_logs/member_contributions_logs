@@ -1,0 +1,11 @@
+## Team Member: Mathias Vecchio
+
+###  Commits
+- Created the minutes for sprint 2 (I create and take meeting minutes)               (1hr)
+
+###  Issues Closed
+[Task] #36  Recipe listing/search page - Frontend                                    (2hr)
+[Task] #59 Connection of search_page to database and UI fix                          (2hr)
+
+### Pull Requests Reviewed
+- Added search bar (filter recipes + resets when search is clicked again)            (30min)
