@@ -44,7 +44,7 @@ export default function SearchPage() {
                 return;
             }
 
-            const formatted: Recipe[] = (data || []).map((r: any) => ({
+            const formatted: Recipe[] = (data || []).map((r) => ({
                 id: r.id,
                 title: r.title,
                 prep_time: r.prep_time,
