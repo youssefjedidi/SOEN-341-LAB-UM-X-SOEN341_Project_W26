@@ -18,9 +18,14 @@ export default function SearchPage() {
     const router = useRouter();
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
+    // input box
+    const [searchInput, setSearchInput] = useState("");
 
-    {/* Mock recipe data, to be used for testing */ }
-    {/* In the future, this should be replaced with an API call to fetch recipes based on the search */ }
+    //actually used for filtering ( only when clicking Search)
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Mock recipe data, to be used for testing */ }
+    //{/* In the future, this should be replaced with an API call to fetch recipes based on the search */ }
     const mockRecipes: Recipe[] = [
         {
             id: "1",
@@ -95,22 +100,69 @@ export default function SearchPage() {
             difficulty: 1,
         },
     ];
+// filtering
+    const filteredRecipes = mockRecipes.filter((recipe) => {
+    const q = searchTerm.trim().toLowerCase();
+    if (q === "") return true;
+    return recipe.title.toLowerCase().includes(q);
+});
 
 
-
+    //Recipe listing with search bar
     return (
         <div className={`${layoutStyles.pageContainer} relative`}>
 
-            {/* Search bar */}
+{/* SEARCH BAR */}
+<div className="absolute top-6 left-6 w-150">
+    <div className="flex gap-4 items-center">
 
-            {/* Recipe listing */}
+        <input
+            type="text"
+            placeholder="Type recipe name..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="
+                flex-1
+                px-6 py-4
+                text-xl
+                font-bold
+                rounded-2xl
+                border-2 border-black
+                outline-none
+            "
+        />
+
+        <button
+            type="button"
+            onClick={() => {
+                setSearchTerm(searchInput);
+                setSelectedRecipe(null);
+            }}
+            className="
+                px-8 py-4
+                text-xl
+                font-black
+                rounded-2xl
+                border-2 border-black
+                bg-emerald-500
+                hover:bg-emerald-600
+                transition
+            "
+        >
+            SEARCH
+        </button>
+
+    </div>
+</div>
+
             <div className="absolute top-24 left-6 w-150">
                 <div
                     className={`${layoutStyles.formCard} max-h-[75vh] overflow-y-auto`}
-                    dir="rtl"   // scrollbar on the left
+                    dir="rtl"   // scrollbar on the left 
                 >
+
                     <ul className="space-y-3" dir="ltr">
-                        {mockRecipes.map((recipe) => (
+                     {filteredRecipes.map((recipe) => ( // i used filtered recipes instead of mock
 
                             <li
                                 key={recipe.id}
