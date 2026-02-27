@@ -35,7 +35,7 @@
 - README and Deliverables updates (documentation) #56, #65                                  (20 min) 
 
 ### Other contributions
-Record videos of acceptance criteria for sprint 1                                           (45 min)
+- Record videos of acceptance criteria for sprint 1                                           (45 min)
 
 ## Team Member: Rami Thabet
 
@@ -43,6 +43,24 @@ Record videos of acceptance criteria for sprint 1                               
 [Task] #40 Implement Create/Edit Recipe page and navigation                                         (3 hrs)
                                                                      
 ### Other contributions
-Created two units tests for search utility functions                                                 (1hr)
+- Created two units tests for search utility functions                                                 (1hr)
 
+## Team Member: Ashley Samered
 
+###  Commits
+
+- Implemented validation for recipe form (title, ingredients, instructions cannot be empty) (1hr)
+
+- Implemented search bar functionality on recipe listing page (2hr)
+
+- Supabase installation, configuration, and GitHub integration setup (2hr)
+
+###  Issues Closed
+
+[Task] Recipe Form Validation – Prevent empty title, ingredients, and instructions 
+[Task] Recipe Listing/Search Page Implementation 
+[Task] Supabase Setup & Database Connection 
+
+###  Pull Requests Reviewed
+
+- Search bar implementation and validation logic integration (30min)
