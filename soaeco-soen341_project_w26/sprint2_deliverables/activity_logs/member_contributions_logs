@@ -62,16 +62,6 @@
 [Task] Supabase Setup & Database Connection 
 
 ###  Pull Requests Reviewed
-
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-- Search bar implementation and validation logic integration (30min)
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 - Search bar implementation and validation logic integration                                                (30min)
 
 ## Team Member: Youssef Jedidi
@@ -81,15 +71,7 @@
 and debounced frontend integration                                                                          (3hr)
 - Issue #46: Implemented Recipe logic for creating and editing recipes                                      (2hr)
 - Issue #47: Performed front end redesign of search and recipe elements                                     (1hr)
-- Added password recovering system.
+- Added password recovering system.                                                                         (2hr)
+
 ### Pull Requests Reviewed
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 - #31: Reviewed Sprint 2 Deliverables                                                                       (20min)
->>>>>>> Stashed changes
-=======
-- #31: Reviewed Sprint 2 Deliverables                                                                       (20min)
->>>>>>> Stashed changes
-=======
-- #31: Reviewed Sprint 2 Deliverables                                                                       (20min)
->>>>>>> Stashed changes
