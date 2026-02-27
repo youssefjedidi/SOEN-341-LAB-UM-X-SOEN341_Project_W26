@@ -31,6 +31,9 @@ jobs:
       - name: Check for Linting Errors
         run: npm run lint
 
+      - name: Run Tests
+        run: npm run test
+
       - name: Check if App Builds
         run: npm run build
         env:
