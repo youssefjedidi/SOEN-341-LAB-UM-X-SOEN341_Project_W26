@@ -14,6 +14,7 @@ MealMajor also provides a weekly meal planner that allows users to assign recipe
 
 - **Youssef Jedidi** (ID: [40234176]) - [Scrum Master]
 - **Rami Thabet** (ID: [40236685]) - [Member]
+  Background: Experienced in C++, Javascript, and front-end development
 - **Ashley Samerev** (ID: [40273454]) - [Member]
 - **Mathias Vecchio** (ID: [40276964]) - [Member]
   Background: Aerospace option C student with experience in C++ and control systems in MATLAB & Simulink
