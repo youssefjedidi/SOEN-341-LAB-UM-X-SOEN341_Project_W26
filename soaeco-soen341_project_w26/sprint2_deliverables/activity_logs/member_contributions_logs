@@ -1,11 +1,76 @@
 ## Team Member: Mathias Vecchio
 
 ###  Commits
-- Created the minutes for sprint 2 (I create and take meeting minutes)               (1hr)
+- Created the minutes for sprint 2 (I create and take meeting minutes)                      (1hr)
 
 ###  Issues Closed
-[Task] #36  Recipe listing/search page - Frontend                                    (2hr)
-[Task] #59 Connection of search_page to database and UI fix                          (2hr)
+[Task] #36  Recipe listing/search page - Frontend                                           (2hr)
+[Task] #59 Connection of search_page to database and UI fix                                 (2hr)
 
 ### Pull Requests Reviewed
 - Added search bar (filter recipes + resets when search is clicked again)            (30min)
+
+## Team Member: Nicolas Correa-Vallenas
+
+###  Commits
+- Update Sprint 2 Deliverables section in README                                    (2min)
+
+###  Issues Closed
+[Task] #52 Create filter bar on recipe listing page                                  (2.5hr)
+[Task] #64 Custom Restrictions and Preferences + Backend + Flow Changes              (2hr)
+
+### Pull Requests Reviewed
+- Add filtering, minor styling changes                                               (10min)
+- Frontend filter feature functional                                                 (20min)
+- Front end redesign                                                                 (15min)
+
+## Team Member: Yana Vassilyev
+
+###  Issues Closed
+[Task] #53 Implement Dynamic Filtering Query Logic                                          (3 hrs)
+[Task] #52 Implement Filter UI Components (Collaborated)                                    (20 min)
+
+### Pull Requests Reviewed
+- Replace mock recipes with Supabase database fetch + UI fix #60                            (15 min)
+- README and Deliverables updates (documentation) #56, #65                                  (20 min) 
+
+### Other contributions
+- Record videos of acceptance criteria for sprint 1                                           (45 min)
+
+## Team Member: Rami Thabet
+
+###  Issues Closed
+[Task] #40 Implement Create/Edit Recipe page and navigation                                         (3 hrs)
+                                                                     
+### Other contributions
+- Created two units tests for search utility functions                                                 (1hr)
+
+## Team Member: Ashley Samered
+
+###  Commits
+
+- Implemented validation for recipe form (title, ingredients, instructions cannot be empty) (1hr)
+
+- Implemented search bar functionality on recipe listing page (2hr)
+
+- Supabase installation, configuration, and GitHub integration setup (2hr)
+
+###  Issues Closed
+
+[Task] Recipe Form Validation – Prevent empty title, ingredients, and instructions 
+[Task] Recipe Listing/Search Page Implementation 
+[Task] Supabase Setup & Database Connection 
+
+###  Pull Requests Reviewed
+
+- Search bar implementation and validation logic integration (30min)
+
+## Team Member: Youssef Jedidi
+
+###  Commits
+- Issue #87: Implemented robust backend recipe search API with Postgres fuzzy matching (pg_trgm) and debounced frontend integration (3hr)
+- Issue #46: Implemented Recipe logic for creating and editing recipes (2hr)
+- Issue #47: Performed front end redesign of search and recipe elements (1hr)
+
+### Pull Requests Reviewed
+- #31: Reviewed Sprint 2 Deliverables (20min)

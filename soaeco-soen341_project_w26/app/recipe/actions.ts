@@ -7,10 +7,12 @@ export const createRecipe = async (data: {
   title: string;
   prep_time: number;
   ingredients: string[];
+  restrictions: string[];
   cost: number;
   prep_steps: string;
   difficulty: number;
   user_id: string;
+  tags?: string[];
 }) => {
   if (!supabaseAdmin) return { success: false, error: "Server error: Database connection not available" };
 
@@ -18,6 +20,8 @@ export const createRecipe = async (data: {
     title: data.title,
     prep_time: data.prep_time,
     ingredients: data.ingredients,
+    restrictions: data.restrictions,
+    tags: data.tags || [],
     cost: data.cost,
     preparation_steps: data.prep_steps,
     difficulty: data.difficulty,
@@ -49,9 +53,11 @@ export const updateRecipe = async (
     title?: string;
     prep_time?: number;
     ingredients?: string[];
+    restrictions?: string[];
     cost?: number;
     prep_steps?: string;
     difficulty?: number;
+    tags?: string[];
   },
 ) => {
   if (!supabaseAdmin) return { success: false, error: "Server error" };
@@ -60,6 +66,8 @@ export const updateRecipe = async (
     updateData.preparation_steps = data.prep_steps;
     delete updateData.prep_steps;
   }
+  // Ensure tags are always included (even empty array)
+  updateData.tags = data.tags ?? [];
   const { data: recipe, error } = await supabaseAdmin
     .from("recipes")
     .update(updateData)
