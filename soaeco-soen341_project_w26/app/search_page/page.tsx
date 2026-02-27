@@ -32,39 +32,63 @@ export default function SearchPage() {
     // Recipe Listing state
     const [recipes, setRecipes] = useState<Recipe[]>([]);
 
-    // Fetch recipes from Supabase when the page loads
+    // Actually used for filtering when clicking Search
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Fetch recipes when the page loads or when searchTerm changes
     useEffect(() => {
         async function fetchRecipes() {
-            const { data, error } = await supabase
-                .from("recipes")
-                .select("*");
+            try {
+                let rawData: Recipe[] = [];
+                const q = searchTerm.trim();
+                
+                if (q !== "") {
+                    // Use the backend API to search database directly
+                    const res = await fetch(`/api/search?keyword=${encodeURIComponent(q)}`);
+                    if (!res.ok) throw new Error("Search API error");
+                    rawData = await res.json();
+                } else {
+                    // Fallback to fetch all
+                    const { data, error } = await supabase.from("recipes").select("*");
+                    if (error) throw error;
+                    rawData = data || [];
+                }
 
-            if (error) {
-                console.error("Error fetching recipes:", error);
-                return;
+                const formatted: Recipe[] = rawData.map((r: Recipe) => ({
+                    id: r.id,
+                    title: r.title,
+                    prep_time: r.prep_time,
+                    ingredients: r.ingredients,
+                    restrictions: r.restrictions || [],
+                    cost: r.cost,
+                    difficulty: r.difficulty,
+                    prep_steps: r.preparation_steps,
+                }));
+
+                setRecipes(formatted);
+            } catch (err) {
+                console.error("Error fetching recipes:", err);
+                setRecipes([]);
             }
-
-            const formatted: Recipe[] = (data || []).map((r) => ({
-                id: r.id,
-                title: r.title,
-                prep_time: r.prep_time,
-                ingredients: r.ingredients,
-                restrictions: r.restrictions || [],
-                cost: r.cost,
-                difficulty: r.difficulty,
-                prep_steps: r.preparation_steps, // DB column -> your UI field
-            }));
-
-            setRecipes(formatted);
         }
 
         fetchRecipes();
-    }, []);
+    }, [searchTerm]);
 
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
     // input box
     const [searchInput, setSearchInput] = useState("");
+    
+    // Auto-Search with 400ms Debounce
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setSearchTerm(searchInput);
+            // Optionally clear selected recipe if the user starts a totally new string (but usually we leave it)
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchInput]);
+
     // Filter state
     const [filtersOpen, setFiltersOpen] = useState(false);
     const [filterDifficulty, setFilterDifficulty] = useState(0);
@@ -105,8 +129,7 @@ export default function SearchPage() {
     }
 
 
-    //actually used for filtering ( only when clicking Search)
-    const [searchTerm, setSearchTerm] = useState("");
+    // searchTerm state was moved up
 
     // Applied filter states (only update when clicking Apply)
     const [appliedDifficulty, setAppliedDifficulty] = useState(0);
@@ -130,12 +153,8 @@ export default function SearchPage() {
         setFiltersOpen(false);
     }
 
-    // filtering
+    // filtering (text search is now handled by backend!)
     const filteredRecipes = recipes.filter((recipe) => {
-        // Search term filter
-        const q = searchTerm.trim().toLowerCase();
-        if (q !== "" && !recipe.title.toLowerCase().includes(q)) return false;
-
         // Difficulty filter (show recipes at or below selected difficulty)
         if (appliedDifficulty > 0 && recipe.difficulty > appliedDifficulty) return false;
 
@@ -427,19 +446,22 @@ export default function SearchPage() {
                 >
 
                     <ul className="space-y-3" dir="ltr">
-                        {filteredRecipes.map((recipe) => ( // i used filtered recipes instead of mock
-
-                            <li
-                                key={recipe.id}
-                                onClick={() => setSelectedRecipe(recipe)}
-                                className={formStyles.cardListItem}
-                            >
-                                <h2 className="font-black text-xl mb-1">{recipe.title}</h2>
-                                <p className={formStyles.label + " mb-0"}>
-                                    ⏱ {recipe.prep_time} min • ⭐ {recipe.difficulty}/5 • 💰 ${recipe.cost}
-                                </p>
-                            </li>
-                        ))}
+                        {filteredRecipes.length === 0 ? (
+                            <div className="text-center font-bold text-stone-500 py-10 normal-case">No results found.</div>
+                        ) : (
+                            filteredRecipes.map((recipe) => (
+                                <li
+                                    key={recipe.id}
+                                    onClick={() => setSelectedRecipe(recipe)}
+                                    className={formStyles.cardListItem}
+                                >
+                                    <h2 className="font-black text-xl mb-1">{recipe.title}</h2>
+                                    <p className={formStyles.label + " mb-0"}>
+                                        ⏱ {recipe.prep_time} min • ⭐ {recipe.difficulty}/5 • 💰 ${recipe.cost}
+                                    </p>
+                                </li>
+                            ))
+                        )}
                     </ul>
                 </div>
 
