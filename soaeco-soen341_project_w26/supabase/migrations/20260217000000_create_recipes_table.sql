@@ -11,7 +11,23 @@ CREATE TABLE IF NOT EXISTS recipes (
 );
 -- Enable Row Level Security (RLS)
 ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;
--- Policy: Users can only see/edit their own recipes
-CREATE POLICY "Users can manage their own recipes"
-ON recipes FOR ALL
+
+-- Anyone can view all recipes
+CREATE POLICY "Anyone can view recipes"
+ON recipes FOR SELECT
+USING (true);
+
+-- Only owners can insert their own recipes
+CREATE POLICY "Users can insert their own recipes"
+ON recipes FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
+-- Only owners can update their own recipes
+CREATE POLICY "Users can update their own recipes"
+ON recipes FOR UPDATE
+USING (auth.uid() = user_id);
+
+-- Only owners can delete their own recipes
+CREATE POLICY "Users can delete their own recipes"
+ON recipes FOR DELETE
 USING (auth.uid() = user_id);

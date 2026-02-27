@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { layoutStyles, formStyles } from '@/lib/styles';
 import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 type Recipe = {
     id: string;
@@ -13,6 +14,8 @@ type Recipe = {
     prep_steps: string;
     difficulty: number;
 };
+
+
 
 // Filter options
 const restrictionOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Halal", "Kosher"];
@@ -25,6 +28,38 @@ function toggleItem<T>(arr: T[], item: T): T[] {
 
 export default function SearchPage() {
     const router = useRouter();
+
+    // Recipe Listing state
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
+
+    // Fetch recipes from Supabase when the page loads
+    useEffect(() => {
+        async function fetchRecipes() {
+            const { data, error } = await supabase
+                .from("recipes")
+                .select("*");
+
+            if (error) {
+                console.error("Error fetching recipes:", error);
+                return;
+            }
+
+            const formatted: Recipe[] = (data || []).map((r) => ({
+                id: r.id,
+                title: r.title,
+                prep_time: r.prep_time,
+                ingredients: r.ingredients,
+                cost: r.cost,
+                difficulty: r.difficulty,
+                prep_steps: r.preparation_steps, // DB column -> your UI field
+            }));
+
+            setRecipes(formatted);
+        }
+
+        fetchRecipes();
+    }, []);
+
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
     // input box
@@ -60,110 +95,62 @@ export default function SearchPage() {
         setFilterMaxTime("");
         setSelectedRestrictions([]);
         setSelectedPreferences([]);
+        // Also clear applied filters
+        setAppliedDifficulty(0);
+        setAppliedMaxCost("");
+        setAppliedMaxTime("");
     }
 
 
     //actually used for filtering ( only when clicking Search)
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Mock recipe data, to be used for testing */ }
-    //{/* In the future, this should be replaced with an API call to fetch recipes based on the search */ }
-    const mockRecipes: Recipe[] = [
-        {
-            id: "1",
-            title: "Chicken Stir Fry",
-            prep_time: 20,
-            ingredients: ["Chicken breast", "Bell peppers", "Soy sauce", "Garlic", "Rice"],
-            cost: 12.5,
-            prep_steps: "Slice chicken.\nChop vegetables.\nStir-fry chicken until cooked.\nAdd vegetables and sauce.\nServe over rice.",
-            difficulty: 2,
-        },
-        {
-            id: "2",
-            title: "Spaghetti Bolognese",
-            prep_time: 45,
-            ingredients: ["Spaghetti", "Ground beef", "Tomato sauce", "Onion", "Olive oil"],
-            cost: 10,
-            prep_steps: "Boil spaghetti.\nSauté onion in olive oil.\nAdd ground beef and cook.\nPour in tomato sauce.\nSimmer and serve over pasta.",
-            difficulty: 3,
-        },
-        {
-            id: "3",
-            title: "Vegetarian Tacos",
-            prep_time: 25,
-            ingredients: ["Tortillas", "Black beans", "Corn", "Avocado", "Salsa"],
-            cost: 8,
-            prep_steps: "Warm tortillas.\nHeat beans and corn.\nAssemble fillings in tortillas.\nTop with avocado and salsa.",
-            difficulty: 1,
-        },
-        {
-            id: "4",
-            title: "Chicken Alfredo",
-            prep_time: 30,
-            ingredients: ["Chicken", "Fettuccine", "Cream", "Parmesan", "Garlic"],
-            cost: 11,
-            prep_steps: "Cook pasta.\nGrill chicken.\nPrepare cream sauce with garlic.\nMix pasta with sauce.\nTop with sliced chicken and parmesan.",
-            difficulty: 2,
-        },
-        {
-            id: "5",
-            title: "Beef Burrito",
-            prep_time: 35,
-            ingredients: ["Tortillas", "Ground beef", "Rice", "Beans", "Cheese"],
-            cost: 9,
-            prep_steps: "Cook beef with seasoning.\nWarm tortillas.\nAdd rice, beans, and beef.\nRoll burritos and serve.",
-            difficulty: 3,
-        },
-        {
-            id: "6",
-            title: "Tofu Stir Fry",
-            prep_time: 25,
-            ingredients: ["Tofu", "Broccoli", "Carrots", "Soy sauce", "Sesame oil"],
-            cost: 7,
-            prep_steps: "Cube tofu.\nStir-fry tofu until golden.\nAdd vegetables.\nDrizzle with soy sauce and sesame oil.\nServe hot.",
-            difficulty: 1,
-        },
-        {
-            id: "7",
-            title: "Salmon Bowl",
-            prep_time: 20,
-            ingredients: ["Salmon fillet", "Rice", "Avocado", "Cucumber", "Teriyaki sauce"],
-            cost: 13,
-            prep_steps: "Cook rice.\nPan-sear salmon.\nSlice avocado and cucumber.\nAssemble bowl and drizzle with sauce.",
-            difficulty: 2,
-        },
-        {
-            id: "8",
-            title: "Pesto Pasta",
-            prep_time: 15,
-            ingredients: ["Pasta", "Pesto sauce", "Cherry tomatoes", "Parmesan"],
-            cost: 6,
-            prep_steps: "Boil pasta.\nDrain and mix with pesto.\nAdd tomatoes.\nTop with parmesan and serve.",
-            difficulty: 1,
-        },
-    ];
-// filtering
-    const filteredRecipes = mockRecipes.filter((recipe) => {
-    const q = searchTerm.trim().toLowerCase();
-    if (q === "") return true;
-    return recipe.title.toLowerCase().includes(q);
-});
+    // Applied filter states (only update when clicking Apply)
+    const [appliedDifficulty, setAppliedDifficulty] = useState(0);
+    const [appliedMaxCost, setAppliedMaxCost] = useState("");
+    const [appliedMaxTime, setAppliedMaxTime] = useState("");
+
+    // Apply filters function
+    function applyFilters() {
+        setAppliedDifficulty(filterDifficulty);
+        setAppliedMaxCost(filterMaxCost);
+        setAppliedMaxTime(filterMaxTime);
+        setFiltersOpen(false);
+    }
+
+    // filtering
+    const filteredRecipes = recipes.filter((recipe) => {
+        // Search term filter
+        const q = searchTerm.trim().toLowerCase();
+        if (q !== "" && !recipe.title.toLowerCase().includes(q)) return false;
+
+        // Difficulty filter (show recipes at or below selected difficulty)
+        if (appliedDifficulty > 0 && recipe.difficulty > appliedDifficulty) return false;
+
+        // Max cost filter
+        if (appliedMaxCost !== "" && recipe.cost > parseFloat(appliedMaxCost)) return false;
+
+        // Max time filter
+        if (appliedMaxTime !== "" && recipe.prep_time > parseInt(appliedMaxTime)) return false;
+
+        return true;
+    });
 
 
     //Recipe listing with search bar
     return (
         <div className={`${layoutStyles.pageContainer} relative`}>
 
-{/* SEARCH BAR */}
-<div className="absolute top-6 left-6 w-150">
-    <div className="flex gap-4 items-center">
+            {/* SEARCH BAR */}
+            <div className="absolute top-6 left-6 w-150">
+                <div className="flex gap-4 items-center">
 
-        <input
-            type="text"
-            placeholder="Type recipe name..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="
+                    <input
+                        type="text"
+                        placeholder="Type recipe name..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="
                 flex-1
                 px-6 py-4
                 text-xl
@@ -172,15 +159,15 @@ export default function SearchPage() {
                 border-2 border-black
                 outline-none
             "
-        />
+                    />
 
-        <button
-            type="button"
-            onClick={() => {
-                setSearchTerm(searchInput);
-                setSelectedRecipe(null);
-            }}
-            className="
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setSearchTerm(searchInput);
+                            setSelectedRecipe(null);
+                        }}
+                        className="
                 px-8 py-4
                 text-xl
                 font-black
@@ -190,20 +177,20 @@ export default function SearchPage() {
                 hover:bg-emerald-600
                 transition
             "
-        >
-            SEARCH
-        </button>
+                    >
+                        SEARCH
+                    </button>
 
-    </div>
-</div>
+                </div>
+            </div>
 
             {/* ================= FILTERS SECTION ================= */}
-            <div className="absolute top-6 left-[700px] z-10">
+            <div className="absolute top-6 left-[640px] z-10">
                 {/* Toggle Button */}
                 <button
                     type="button"
                     onClick={() => setFiltersOpen((prev) => !prev)}
-                    className={`${formStyles.secondaryButton} !w-auto !flex-none !px-6 !py-3 !rounded-full flex items-center gap-2`}
+                    className={`px-8 py-4 text-xl font-black rounded-2xl border-2 border-black bg-[#FDFBF7] hover:bg-[#FDFBF7] transition flex items-center gap-2`}
                 >
                     <span>Filters</span>
                     <span className={`transition-transform ${filtersOpen ? 'rotate-180' : ''}`}>▾</span>
@@ -211,12 +198,12 @@ export default function SearchPage() {
 
                 {/* Filter Panel */}
                 {filtersOpen && (
-                    <div 
+                    <div
                         ref={dropdownWrapRef}
                         className={`${layoutStyles.formCard} !max-w-none mt-4 !p-6`}
                     >
                         <div className="flex flex-wrap gap-4 items-end">
-                            
+
                             {/* Difficulty */}
                             <div className="flex flex-col gap-2 min-w-[220px]">
                                 <label className={formStyles.label}>Difficulty</label>
@@ -227,11 +214,10 @@ export default function SearchPage() {
                                                 key={d}
                                                 type="button"
                                                 onClick={() => setFilterDifficulty(filterDifficulty === d ? 0 : d)}
-                                                className={`w-8 h-8 rounded-lg border-2 text-sm font-black transition-all ${
-                                                    filterDifficulty >= d
-                                                        ? "bg-emerald-500 border-stone-900 text-stone-900 shadow-[2px_2px_0px_#1c1917]"
-                                                        : "bg-white border-stone-200 text-stone-400 hover:border-stone-900 hover:text-stone-900"
-                                                }`}
+                                                className={`w-8 h-8 rounded-lg border-2 text-sm font-black transition-all ${filterDifficulty >= d
+                                                    ? "bg-emerald-500 border-stone-900 text-stone-900 shadow-[2px_2px_0px_#1c1917]"
+                                                    : "bg-white border-stone-200 text-stone-400 hover:border-stone-900 hover:text-stone-900"
+                                                    }`}
                                             >
                                                 ★
                                             </button>
@@ -285,8 +271,8 @@ export default function SearchPage() {
                                     className={`${formStyles.input} !py-2 !px-3 flex items-center justify-between cursor-pointer`}
                                 >
                                     <span className={selectedRestrictions.length > 0 ? "text-stone-900" : "text-stone-400"}>
-                                        {selectedRestrictions.length === 0 
-                                            ? "Any" 
+                                        {selectedRestrictions.length === 0
+                                            ? "Any"
                                             : `${selectedRestrictions.length} selected`}
                                     </span>
                                     <span className={`text-stone-400 transition-transform ${restrictionsOpen ? 'rotate-180' : ''}`}>▾</span>
@@ -335,8 +321,8 @@ export default function SearchPage() {
                                     className={`${formStyles.input} !py-2 !px-3 flex items-center justify-between cursor-pointer`}
                                 >
                                     <span className={selectedPreferences.length > 0 ? "text-stone-900" : "text-stone-400"}>
-                                        {selectedPreferences.length === 0 
-                                            ? "Any" 
+                                        {selectedPreferences.length === 0
+                                            ? "Any"
                                             : `${selectedPreferences.length} selected`}
                                     </span>
                                     <span className={`text-stone-400 transition-transform ${preferencesOpen ? 'rotate-180' : ''}`}>▾</span>
@@ -385,6 +371,18 @@ export default function SearchPage() {
                                 </button>
                             </div>
 
+                            {/* Apply Button */}
+                            <div className="flex flex-col gap-2">
+                                <label className={`${formStyles.label} invisible`}>Apply</label>
+                                <button
+                                    type="button"
+                                    onClick={applyFilters}
+                                    className={`${formStyles.button} !flex-none !py-1.5 !px-4`}
+                                >
+                                    Apply Filters
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 )}
@@ -394,12 +392,12 @@ export default function SearchPage() {
             {/* Recipe listing */}
             <div className="absolute top-24 left-6 w-150">
                 <div
-                    className={`${layoutStyles.formCard} max-h-[75vh] overflow-y-auto`}
+                    className={`${layoutStyles.formCard} max-h-[85vh] overflow-y-auto`}
                     dir="rtl"   // scrollbar on the left 
                 >
 
                     <ul className="space-y-3" dir="ltr">
-                     {filteredRecipes.map((recipe) => ( // i used filtered recipes instead of mock
+                        {filteredRecipes.map((recipe) => ( // i used filtered recipes instead of mock
 
                             <li
                                 key={recipe.id}
@@ -414,11 +412,21 @@ export default function SearchPage() {
                         ))}
                     </ul>
                 </div>
+
+                {/* Create Recipe Button */}
+                <div className="w-full flex justify-start mt-4">
+                    <button
+                        onClick={() => router.push('/recipe')}
+                        className={`${formStyles.button} w-full max-w-md rounded-2xl shadow-[8px_8px_0px_#1c1917]`}
+                    >
+                        + Create Recipe
+                    </button>
+                </div>
             </div>
 
             {/* Recipe details panel */}
             <div className="absolute top-24 right-6 w-[45%]">
-                <div className={layoutStyles.formCard + " !max-w-none"}>
+                <div className={layoutStyles.formCard + " !max-w-none max-h-[85vh] overflow-y-auto"}>
                     {!selectedRecipe ? (
                         <p className={formStyles.helperText + " mt-0 normal-case"}>
                             Select a recipe to view its details.
@@ -452,27 +460,6 @@ export default function SearchPage() {
                         </>
                     )}
                 </div>
-            </div>
-
-
-            {/* Lower Navigation Panel */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-between">
-
-                {/* Create Recipe Button */}
-                <button
-                    onClick={() => router.push('/recipe')}
-                    className={`${formStyles.button} w-[20%] rounded-none py-8 shadow-lg border-black border-1`}
-                >
-                    Create Recipe
-                </button>
-
-                {/* Profile Button*/}
-                <button
-                    onClick={() => router.push('/profile_management')}
-                    className={`${formStyles.button} w-[20%] rounded-none py-8 shadow-lg border-black border-1`}
-                >
-                    Profile
-                </button>
             </div>
 
         </div>
