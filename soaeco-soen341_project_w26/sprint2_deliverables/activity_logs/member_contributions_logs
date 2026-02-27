@@ -64,8 +64,11 @@
 ###  Pull Requests Reviewed
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 - Search bar implementation and validation logic integration (30min)
 =======
+=======
+>>>>>>> Stashed changes
 - Search bar implementation and validation logic integration                                                (30min)
 
 ## Team Member: Youssef Jedidi
@@ -77,5 +80,9 @@ and debounced frontend integration                                              
 - Issue #47: Performed front end redesign of search and recipe elements                                     (1hr)
 - Added password recovering system.
 ### Pull Requests Reviewed
+<<<<<<< Updated upstream
+- #31: Reviewed Sprint 2 Deliverables                                                                       (20min)
+>>>>>>> Stashed changes
+=======
 - #31: Reviewed Sprint 2 Deliverables                                                                       (20min)
 >>>>>>> Stashed changes
