@@ -1,11 +1,48 @@
 ## Team Member: Mathias Vecchio
 
 ###  Commits
-- Created the minutes for sprint 2 (I create and take meeting minutes)               (1hr)
+- Created the minutes for sprint 2 (I create and take meeting minutes)                      (1hr)
 
 ###  Issues Closed
-[Task] #36  Recipe listing/search page - Frontend                                    (2hr)
-[Task] #59 Connection of search_page to database and UI fix                          (2hr)
+[Task] #36  Recipe listing/search page - Frontend                                           (2hr)
+[Task] #59 Connection of search_page to database and UI fix                                 (2hr)
 
 ### Pull Requests Reviewed
 - Added search bar (filter recipes + resets when search is clicked again)            (30min)
+
+## Team Member: Nicolas Correa-Vallenas
+
+###  Commits
+- Update Sprint 2 Deliverables section in README                                    (2min)
+
+###  Issues Closed
+[Task] #52 Create filter bar on recipe listing page                                  (2.5hr)
+[Task] #64 Custom Restrictions and Preferences + Backend + Flow Changes              (2hr)
+
+### Pull Requests Reviewed
+- Add filtering, minor styling changes                                               (10min)
+- Frontend filter feature functional                                                 (20min)
+- Front end redesign                                                                 (15min)
+
+## Team Member: Yana Vassilyev
+
+###  Issues Closed
+[Task] #53 Implement Dynamic Filtering Query Logic                                          (3 hrs)
+[Task] #52 Implement Filter UI Components (Collaborated)                                    (20 min)
+
+### Pull Requests Reviewed
+- Replace mock recipes with Supabase database fetch + UI fix #60                            (15 min)
+- README and Deliverables updates (documentation) #56, #65                                  (20 min) 
+
+### Other contributions
+Record videos of acceptance criteria for sprint 1                                           (45 min)
+
+## Team Member: Rami Thabet
+
+###  Issues Closed
+[Task] #40 Implement Create/Edit Recipe page and navigation                                         (3 hrs)
+                                                                     
+### Other contributions
+Created two units tests for search utility functions                                                 (1hr)
+
+
