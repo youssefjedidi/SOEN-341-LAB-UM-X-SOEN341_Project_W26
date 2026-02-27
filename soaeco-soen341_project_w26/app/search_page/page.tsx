@@ -427,6 +427,12 @@ export default function SearchPage() {
                 >
 
                     <ul className="space-y-3" dir="ltr">
+                        {/* No results message */}
+                        {filteredRecipes.length === 0 && (
+                            <p className={formStyles.helperText + " mt-0"}>
+                                No recipes found.
+                            </p>
+                        )}
                         {filteredRecipes.map((recipe) => ( // i used filtered recipes instead of mock
 
                             <li
