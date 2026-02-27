@@ -12,10 +12,11 @@ MealMajor also provides a weekly meal planner that allows users to assign recipe
 
 ## Team Members
 
-- **Youssef Jedidi** (ID: [40234176]) - [Scrum Master]
+- **Youssef Jedidi** (ID: [40234176]) - [Scrum Master] Background: Full-stack engineer experienced in Next.js, Node.js, TypeScript, python , and leading Agile/Scrum teams.
 - **Rami Thabet** (ID: [40236685]) - [Member]
   Background: Experienced in C++, Javascript, and front-end development
 - **Ashley Samerev** (ID: [40273454]) - [Member]
+  Background: Aerospace option C student with experience in C++ and control systems in MATLAB & Simulink
 - **Mathias Vecchio** (ID: [40276964]) - [Member]
   Background: Aerospace option C student with experience in C++ and control systems in MATLAB & Simulink
 - **Yana Vassilyev** (ID: [40270779]) - [Member]

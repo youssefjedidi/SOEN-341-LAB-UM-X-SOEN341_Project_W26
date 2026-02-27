@@ -44,12 +44,12 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Read migration file
-const migrationPath = path.join(
-  __dirname,
-  "../supabase/migrations/20260217000000_create_recipes_table.sql",
-);
-const migrationSQL = fs.readFileSync(migrationPath, "utf8");
+// Get all migration files
+const migrationsDir = path.join(__dirname, "../supabase/migrations/");
+const migrationFiles = fs
+  .readdirSync(migrationsDir)
+  .filter((file) => file.endsWith(".sql"))
+  .sort(); // Run in order
 
 async function setupDatabase() {
   try {
@@ -109,22 +109,30 @@ async function setupDatabase() {
 
     console.log(`${colors.green}✓${colors.reset} SQL executor ready\n`);
 
-    console.log(`${colors.blue}Step 2:${colors.reset} Running migration...`);
+    console.log(`${colors.blue}Step 2:${colors.reset} Running migrations...`);
 
-    // Execute the migration SQL
-    const { data, error } = await supabase.rpc("execute_sql", {
-      sql_text: migrationSQL,
-    });
+    for (const file of migrationFiles) {
+      console.log(`${colors.cyan}  Running ${file}...${colors.reset}`);
+      const sqlText = fs.readFileSync(path.join(migrationsDir, file), "utf8");
 
-    if (error) {
-      throw new Error(`Migration failed: ${error.message}`);
+      const { data, error } = await supabase.rpc("execute_sql", {
+        sql_text: sqlText,
+      });
+
+      if (error) {
+        throw new Error(`Migration ${file} failed: ${error.message}`);
+      }
+
+      if (data && data.startsWith("Error:")) {
+        if (!data.includes("already exists") && !data.includes("already a relation") && !data.includes("duplicate key")) {
+          throw new Error(`Migration ${file} SQL Error: ${data}`);
+        } else {
+          console.log(`${colors.yellow}    Note: skipping already applied items in ${file}${colors.reset}`);
+        }
+      }
     }
 
-    if (data && data.startsWith("Error:")) {
-      throw new Error(data);
-    }
-
-    console.log(`${colors.green}✓${colors.reset} Migration complete\n`);
+    console.log(`${colors.green}✓${colors.reset} All migrations complete\n`);
     console.log(
       `${colors.green}✅ Success! Database is ready!${colors.reset}\n`,
     );

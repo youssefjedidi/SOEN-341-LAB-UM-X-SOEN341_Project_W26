@@ -59,6 +59,18 @@ Features Implemented
 
 ## Team Member: Youssef Jedidi
 
+### Commits
+- Issue #25, #27: Initialized Supabase setup, configuration, and environment variables (1.5hr)
+- Issue #15: Implemented registration backend and user login functionality in Supabase (1hr)
+- Issue #17: Centralized Tailwind CSS styles and dynamic profile management page (2.5hr)
+- Issue #12, #23: Created `useAuth` hook and auth state management (1hr)
+- Issue #29: Added password reset functionality (1hr)
+- PRs #28, #30: Fixed ESLint errors and setup CI workflow (1hr)
+
+### Pull Requests Reviewed
+- #25: Reviewed Meeting Minutes #2 (15min)
+- #21: Reviewed PR 21 (15min)
+
 ###  Issues Closed
 - Issue #12 — Profile Backend Logic                                                 (1hr)
 - Issue #11 — Profile Entry Validation                                              (30min)
