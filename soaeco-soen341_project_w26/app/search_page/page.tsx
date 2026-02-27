@@ -254,7 +254,7 @@ export default function SearchPage() {
                                         ))}
                                     </div>
                                     <span className="text-stone-500 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                                        {filterDifficulty === 0 ? "Any" : `${filterDifficulty}+`}
+                                        {filterDifficulty === 0 ? "Any" : `≤${filterDifficulty}`}
                                     </span>
                                 </div>
                             </div>
@@ -291,7 +291,7 @@ export default function SearchPage() {
 
                             {/* Restrictions Dropdown */}
                             <div className="relative flex flex-col gap-2 min-w-[180px]">
-                                <label className={formStyles.label}>Restrictions</label>
+                                <label className={formStyles.label}>Dietary tag</label>
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -488,7 +488,7 @@ export default function SearchPage() {
                             </div>
 
                             <div className="mb-6">
-                                <h3 className={formStyles.label}>Restrictions</h3>
+                                <h3 className={formStyles.label}>Dietary tag</h3>
                                 <ul className="list-disc list-inside text-stone-700 font-bold space-y-1">
                                     {selectedRecipe.restrictions.map((res: string, idx: number) => (
                                         <li key={idx}>{res}</li>
