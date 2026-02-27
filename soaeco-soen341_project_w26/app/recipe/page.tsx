@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
 import { createRecipe, getRecipes, deleteRecipe, updateRecipe } from "./actions";
 import { useAuth } from "@/lib/useAuth";
@@ -12,6 +12,8 @@ export default function RecipePage() {
   const [recipeTitle, setRecipeTitle] = useState("");
   const [ingeredientInput, setIngredientInput] = useState("");
   const [ingredients, setIngredients] = useState<string[]>([]);
+  const [restrictionInput, setRestrictionInput] = useState("");
+  const [restrictions, setRestrictions] = useState<string[]>([]);
   // const [costMode, setCostMode] = useState("");
   const [cost, setCost] = useState("");
   const [prepSteps, setPrepSteps] = useState("");
@@ -61,6 +63,16 @@ export default function RecipePage() {
   const removeIngredient = (idx: number) => {
     setIngredients(ingredients.filter((_, i) => i !== idx));
   };
+
+  const addRestriction = () => {
+    if (restrictionInput.trim() === "") return;
+    setRestrictions([...restrictions, restrictionInput]);
+    setRestrictionInput("");
+  };
+
+  const removeRestriction = (idx: number) => {
+    setRestrictions(restrictions.filter((_, i) => i !== idx));
+  };
   const handleSubmit = async () => {
     if (!user) {
       console.error("User is not authenticated");
@@ -82,18 +94,17 @@ export default function RecipePage() {
           title: recipeTitle,
           prep_time: Number(prepTime),
           ingredients,
+          restrictions,
           cost: Number(cost),
           prep_steps: prepSteps,
           difficulty,
         });
 
         if (result.success) {
-          alert("Recipe updated successfully!");
           resetForm();
           loadRecipes();
         } else {
           console.error("Error updating recipe:", result.error);
-          alert("Error: " + result.error);
         }
         return;
       }
@@ -102,6 +113,7 @@ export default function RecipePage() {
         title: recipeTitle,
         prep_time: Number(prepTime),
         ingredients,
+        restrictions,
         cost: Number(cost),
         prep_steps: prepSteps,
         difficulty,
@@ -110,12 +122,10 @@ export default function RecipePage() {
 
       if (result.success) {
         console.log("Recipe created successfully:", result.recipe);
-        alert("Recipe saved successfully!");
         resetForm();
         loadRecipes();
       } else {
         console.error("Error creating recipe:", result.error);
-        alert("Error: " + result.error);
       }
       // Optionally, reset form or show success message
     } catch (error) {
@@ -128,6 +138,8 @@ export default function RecipePage() {
     setPrepTime("");
     setIngredients([]);
     setIngredientInput("");
+    setRestrictions([]);
+    setRestrictionInput("");
     setCost("");
     setPrepSteps("");
     setDifficulty(3);
@@ -144,6 +156,7 @@ export default function RecipePage() {
     setRecipeTitle(recipe.title);
     setPrepTime(recipe.prep_time?.toString() || "");
     setIngredients(recipe.ingredients || []);
+    setRestrictions(recipe.restrictions || []);
     setCost(recipe.cost?.toString() || "");
     setPrepSteps(recipe.preparation_steps || "");
     setDifficulty(recipe.difficulty || 3);
@@ -224,9 +237,49 @@ export default function RecipePage() {
             )}
           </div>
 
+          {/* Restrictions */}
+          <div className="mb-4">
+            <label className={formStyles.label}>Restrictions</label>
+
+            <div className="flex gap-2">
+              <input
+                className={formStyles.input}
+                type="text"
+                value={restrictionInput}
+                onChange={(e) => setRestrictionInput(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={addRestriction}
+                className={formStyles.secondaryButton + " !py-2 !px-4 !flex-none"}
+              >
+                Add
+              </button>
+            </div>
+            {restrictions.length > 0 && (
+              <ul className="mt-3 space-y-2">
+                {restrictions.map((res, idx) => (
+                  <li
+                    key={idx}
+                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-md flex justify-between items-center"
+                  >
+                    <span>{res}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeRestriction(idx)}
+                      className={formStyles.dangerButton + " !flex-none !py-1 !px-2"}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           {/* Cost*/}
           <div className="mb-4">
-            <label className={formStyles.label}>Cost</label>
+            <label className={formStyles.label}>Cost (per portion)</label>
             <input
               className={formStyles.input}
               type="number"
@@ -298,9 +351,14 @@ export default function RecipePage() {
                 <p className="text-sm text-gray-600 mb-2">
                   Prep: {recipe.prep_time}m | Cost: ${recipe.cost} | Difficulty: {recipe.difficulty}/5
                 </p>
-                <div className="flex flex-wrap gap-1 mb-4 flex-grow">
+                <div className="flex flex-wrap gap-1 mb-2">
                   {recipe.ingredients?.map((ing: string, i: number) => (
                     <span key={i} className="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full">{ing}</span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-1 mb-4 flex-grow">
+                  {recipe.restrictions?.map((res: string, i: number) => (
+                    <span key={i} className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">{res}</span>
                   ))}
                 </div>
                 <div className="flex justify-end gap-2 mt-auto">
@@ -312,16 +370,14 @@ export default function RecipePage() {
                   </button>
                   <button 
                     onClick={async () => {
-                      if (confirm("Are you sure you want to delete this recipe?")) {
-                        const res = await deleteRecipe(recipe.id);
-                        if (res.success) {
-                          loadRecipes();
-                          if (editingRecipeId === recipe.id) {
-                            resetForm();
-                          }
-                        } else {
-                          alert("Failed to delete recipe: " + res.error);
+                      const res = await deleteRecipe(recipe.id);
+                      if (res.success) {
+                        loadRecipes();
+                        if (editingRecipeId === recipe.id) {
+                          resetForm();
                         }
+                      } else {
+                        console.error("Failed to delete recipe:", res.error);
                       }
                     }}
                     className={formStyles.dangerButton + " !py-1 !px-3 !flex-none"}

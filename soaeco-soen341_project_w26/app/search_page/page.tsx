@@ -10,6 +10,7 @@ type Recipe = {
     title: string;
     prep_time: number;
     ingredients: string[];
+    restrictions: string[];
     cost: number;
     prep_steps: string;
     difficulty: number;
@@ -19,7 +20,6 @@ type Recipe = {
 
 // Filter options
 const restrictionOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Halal", "Kosher"];
-const preferenceOptions = ["Quick & Easy", "Budget-Friendly", "High Protein", "Low Carb", "Spicy", "Kid-Friendly", "Meal Prep"];
 
 // Toggle helper for multi-select
 function toggleItem<T>(arr: T[], item: T): T[] {
@@ -49,6 +49,7 @@ export default function SearchPage() {
                 title: r.title,
                 prep_time: r.prep_time,
                 ingredients: r.ingredients,
+                restrictions: r.restrictions || [],
                 cost: r.cost,
                 difficulty: r.difficulty,
                 prep_steps: r.preparation_steps, // DB column -> your UI field
@@ -70,9 +71,9 @@ export default function SearchPage() {
     const [filterMaxCost, setFilterMaxCost] = useState("");
     const [filterMaxTime, setFilterMaxTime] = useState("");
     const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
-    const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+    const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
     const [restrictionsOpen, setRestrictionsOpen] = useState(false);
-    const [preferencesOpen, setPreferencesOpen] = useState(false);
+    const [ingredientsOpen, setIngredientsOpen] = useState(false);
 
     const dropdownWrapRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +82,7 @@ export default function SearchPage() {
         function handleClickOutside(e: MouseEvent) {
             if (dropdownWrapRef.current && !dropdownWrapRef.current.contains(e.target as Node)) {
                 setRestrictionsOpen(false);
-                setPreferencesOpen(false);
+                setIngredientsOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -94,11 +95,13 @@ export default function SearchPage() {
         setFilterMaxCost("");
         setFilterMaxTime("");
         setSelectedRestrictions([]);
-        setSelectedPreferences([]);
+        setSelectedIngredients([]);
         // Also clear applied filters
         setAppliedDifficulty(0);
         setAppliedMaxCost("");
         setAppliedMaxTime("");
+        setAppliedRestrictions([]);
+        setAppliedIngredients([]);
     }
 
 
@@ -109,12 +112,21 @@ export default function SearchPage() {
     const [appliedDifficulty, setAppliedDifficulty] = useState(0);
     const [appliedMaxCost, setAppliedMaxCost] = useState("");
     const [appliedMaxTime, setAppliedMaxTime] = useState("");
+    const [appliedRestrictions, setAppliedRestrictions] = useState<string[]>([]);
+    const [appliedIngredients, setAppliedIngredients] = useState<string[]>([]);
+
+    // Extract unique ingredients from all recipes for the filter dropdown
+    const allIngredients = Array.from(
+        new Set(recipes.flatMap((r) => r.ingredients))
+    ).sort();
 
     // Apply filters function
     function applyFilters() {
         setAppliedDifficulty(filterDifficulty);
         setAppliedMaxCost(filterMaxCost);
         setAppliedMaxTime(filterMaxTime);
+        setAppliedRestrictions([...selectedRestrictions]);
+        setAppliedIngredients([...selectedIngredients]);
         setFiltersOpen(false);
     }
 
@@ -132,6 +144,24 @@ export default function SearchPage() {
 
         // Max time filter
         if (appliedMaxTime !== "" && recipe.prep_time > parseInt(appliedMaxTime)) return false;
+
+        // Restrictions filter - recipe must have ALL selected restrictions
+        if (appliedRestrictions.length > 0) {
+            const recipeRestrictions = recipe.restrictions || [];
+            const hasAllRestrictions = appliedRestrictions.every((r) =>
+                recipeRestrictions.some((rr) => rr.toLowerCase() === r.toLowerCase())
+            );
+            if (!hasAllRestrictions) return false;
+        }
+
+        // Ingredients filter - recipe must have ALL selected ingredients
+        if (appliedIngredients.length > 0) {
+            const recipeIngredients = recipe.ingredients || [];
+            const hasAllIngredients = appliedIngredients.every((ing) =>
+                recipeIngredients.some((ri) => ri.toLowerCase() === ing.toLowerCase())
+            );
+            if (!hasAllIngredients) return false;
+        }
 
         return true;
     });
@@ -266,7 +296,7 @@ export default function SearchPage() {
                                     type="button"
                                     onClick={() => {
                                         setRestrictionsOpen((v) => !v);
-                                        setPreferencesOpen(false);
+                                        setIngredientsOpen(false);
                                     }}
                                     className={`${formStyles.input} !py-2 !px-3 flex items-center justify-between cursor-pointer`}
                                 >
@@ -311,35 +341,35 @@ export default function SearchPage() {
 
                             {/* Preferences Dropdown */}
                             <div className="relative flex flex-col gap-2 min-w-[180px]">
-                                <label className={formStyles.label}>Preferences</label>
+                                <label className={formStyles.label}>Ingredients</label>
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setPreferencesOpen((v) => !v);
+                                        setIngredientsOpen((v) => !v);
                                         setRestrictionsOpen(false);
                                     }}
                                     className={`${formStyles.input} !py-2 !px-3 flex items-center justify-between cursor-pointer`}
                                 >
-                                    <span className={selectedPreferences.length > 0 ? "text-stone-900" : "text-stone-400"}>
-                                        {selectedPreferences.length === 0
+                                    <span className={selectedIngredients.length > 0 ? "text-stone-900" : "text-stone-400"}>
+                                        {selectedIngredients.length === 0
                                             ? "Any"
-                                            : `${selectedPreferences.length} selected`}
+                                            : `${selectedIngredients.length} selected`}
                                     </span>
-                                    <span className={`text-stone-400 transition-transform ${preferencesOpen ? 'rotate-180' : ''}`}>▾</span>
+                                    <span className={`text-stone-400 transition-transform ${ingredientsOpen ? 'rotate-180' : ''}`}>▾</span>
                                 </button>
 
-                                {preferencesOpen && (
+                                {ingredientsOpen && (
                                     <div className="absolute top-full left-0 mt-2 min-w-[200px] w-max bg-white border-2 border-stone-900 rounded-2xl shadow-[6px_6px_0px_#1c1917] p-3 z-50">
                                         <div className="max-h-48 overflow-auto space-y-1">
-                                            {preferenceOptions.map((opt) => (
+                                            {allIngredients.map((opt) => (
                                                 <label
                                                     key={opt}
                                                     className="flex items-center gap-3 p-2 rounded-xl hover:bg-stone-50 cursor-pointer"
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        checked={selectedPreferences.includes(opt)}
-                                                        onChange={() => setSelectedPreferences((prev) => toggleItem(prev, opt))}
+                                                        checked={selectedIngredients.includes(opt)}
+                                                        onChange={() => setSelectedIngredients((prev) => toggleItem(prev, opt))}
                                                         className="w-4 h-4 accent-emerald-600 rounded"
                                                     />
                                                     <span className="text-sm font-bold text-stone-800">{opt}</span>
@@ -349,7 +379,7 @@ export default function SearchPage() {
                                         <div className="pt-2 mt-2 border-t border-stone-200 flex justify-end">
                                             <button
                                                 type="button"
-                                                onClick={() => setPreferencesOpen(false)}
+                                                onClick={() => setIngredientsOpen(false)}
                                                 className={`${formStyles.secondaryButton} !flex-none !py-1.5 !px-4 !text-[10px] !rounded-xl`}
                                             >
                                                 Done
@@ -390,9 +420,9 @@ export default function SearchPage() {
             {/* ================= END FILTERS ================= */}
 
             {/* Recipe listing */}
-            <div className="absolute top-24 left-6 w-150">
+            <div className="absolute top-24 left-6 w-150 h-[calc(100vh-120px)] flex flex-col">
                 <div
-                    className={`${layoutStyles.formCard} max-h-[85vh] overflow-y-auto`}
+                    className={`${layoutStyles.formCard} h-[70%] overflow-y-auto`}
                     dir="rtl"   // scrollbar on the left 
                 >
 
@@ -447,6 +477,15 @@ export default function SearchPage() {
                                     {selectedRecipe.ingredients.map((ing: string, idx: number) => (
 
                                         <li key={idx}>{ing}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="mb-6">
+                                <h3 className={formStyles.label}>Restrictions</h3>
+                                <ul className="list-disc list-inside text-stone-700 font-bold space-y-1">
+                                    {selectedRecipe.restrictions.map((res: string, idx: number) => (
+                                        <li key={idx}>{res}</li>
                                     ))}
                                 </ul>
                             </div>
