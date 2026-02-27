@@ -8,22 +8,21 @@
 [Task] #59 Connection of search_page to database and UI fix                                 (2hr)
 
 ### Pull Requests Reviewed
-- Added search bar (filter recipes + resets when search is clicked again)                   (30min)
+- Added search bar (filter recipes + resets when search is clicked again)            (30min)
 
 ## Team Member: Nicolas Correa-Vallenas
 
 ###  Commits
-- Update Sprint 2 Deliverables section in README                                            (2min)
+- Update Sprint 2 Deliverables section in README                                    (2min)
 
 ###  Issues Closed
-[Task] #52 Create filter bar on recipe listing page                                         (2.5hr)
-[Task] #64 Custom Restrictions and Preferences + Backend + Flow Changes                     (2hr)
-[AT 1.2.2] Credential Verification & Session Creation (Back-End for US [1.2] / Issue #6)    (10min)
+[Task] #52 Create filter bar on recipe listing page                                  (2.5hr)
+[Task] #64 Custom Restrictions and Preferences + Backend + Flow Changes              (2hr)
 
 ### Pull Requests Reviewed
-- Add filtering, minor styling changes                                                      (10min)
-- Frontend filter feature functional                                                        (20min)
-- Front end redesign                                                                        (15min)
+- Add filtering, minor styling changes                                               (10min)
+- Frontend filter feature functional                                                 (20min)
+- Front end redesign                                                                 (15min)
 
 ## Team Member: Yana Vassilyev
 
