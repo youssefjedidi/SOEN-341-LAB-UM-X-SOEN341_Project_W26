@@ -95,18 +95,45 @@ export default function SearchPage() {
         setFilterMaxTime("");
         setSelectedRestrictions([]);
         setSelectedPreferences([]);
+        // Also clear applied filters
+        setAppliedDifficulty(0);
+        setAppliedMaxCost("");
+        setAppliedMaxTime("");
     }
 
 
     //actually used for filtering ( only when clicking Search)
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Applied filter states (only update when clicking Apply)
+    const [appliedDifficulty, setAppliedDifficulty] = useState(0);
+    const [appliedMaxCost, setAppliedMaxCost] = useState("");
+    const [appliedMaxTime, setAppliedMaxTime] = useState("");
+
+    // Apply filters function
+    function applyFilters() {
+        setAppliedDifficulty(filterDifficulty);
+        setAppliedMaxCost(filterMaxCost);
+        setAppliedMaxTime(filterMaxTime);
+        setFiltersOpen(false);
+    }
 
     // filtering
     const filteredRecipes = recipes.filter((recipe) => {
+        // Search term filter
         const q = searchTerm.trim().toLowerCase();
-        if (q === "") return true;
-        return recipe.title.toLowerCase().includes(q);
+        if (q !== "" && !recipe.title.toLowerCase().includes(q)) return false;
+
+        // Difficulty filter (show recipes at or below selected difficulty)
+        if (appliedDifficulty > 0 && recipe.difficulty > appliedDifficulty) return false;
+
+        // Max cost filter
+        if (appliedMaxCost !== "" && recipe.cost > parseFloat(appliedMaxCost)) return false;
+
+        // Max time filter
+        if (appliedMaxTime !== "" && recipe.prep_time > parseInt(appliedMaxTime)) return false;
+
+        return true;
     });
 
 
@@ -158,12 +185,12 @@ export default function SearchPage() {
             </div>
 
             {/* ================= FILTERS SECTION ================= */}
-            <div className="absolute top-[28px] left-[640px] z-10">
+            <div className="absolute top-6 left-[640px] z-10">
                 {/* Toggle Button */}
                 <button
                     type="button"
                     onClick={() => setFiltersOpen((prev) => !prev)}
-                    className={`${formStyles.secondaryButton} !w-auto !flex-none !px-6 !py-3 !rounded-full flex items-center gap-2`}
+                    className={`px-8 py-4 text-xl font-black rounded-2xl border-2 border-black bg-[#FDFBF7] hover:bg-[#FDFBF7] transition flex items-center gap-2`}
                 >
                     <span>Filters</span>
                     <span className={`transition-transform ${filtersOpen ? 'rotate-180' : ''}`}>▾</span>
@@ -344,6 +371,18 @@ export default function SearchPage() {
                                 </button>
                             </div>
 
+                            {/* Apply Button */}
+                            <div className="flex flex-col gap-2">
+                                <label className={`${formStyles.label} invisible`}>Apply</label>
+                                <button
+                                    type="button"
+                                    onClick={applyFilters}
+                                    className={`${formStyles.button} !flex-none !py-1.5 !px-4`}
+                                >
+                                    Apply Filters
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 )}
@@ -353,7 +392,7 @@ export default function SearchPage() {
             {/* Recipe listing */}
             <div className="absolute top-24 left-6 w-150">
                 <div
-                    className={`${layoutStyles.formCard} max-h-[75vh] overflow-y-auto`}
+                    className={`${layoutStyles.formCard} max-h-[85vh] overflow-y-auto`}
                     dir="rtl"   // scrollbar on the left 
                 >
 
@@ -373,11 +412,21 @@ export default function SearchPage() {
                         ))}
                     </ul>
                 </div>
+
+                {/* Create Recipe Button */}
+                <div className="w-full flex justify-start mt-4">
+                    <button
+                        onClick={() => router.push('/recipe')}
+                        className={`${formStyles.button} w-full max-w-md rounded-2xl shadow-[8px_8px_0px_#1c1917]`}
+                    >
+                        + Create Recipe
+                    </button>
+                </div>
             </div>
 
             {/* Recipe details panel */}
             <div className="absolute top-24 right-6 w-[45%]">
-                <div className={layoutStyles.formCard + " !max-w-none"}>
+                <div className={layoutStyles.formCard + " !max-w-none max-h-[85vh] overflow-y-auto"}>
                     {!selectedRecipe ? (
                         <p className={formStyles.helperText + " mt-0 normal-case"}>
                             Select a recipe to view its details.
@@ -411,27 +460,6 @@ export default function SearchPage() {
                         </>
                     )}
                 </div>
-            </div>
-
-
-            {/* Lower Navigation Panel */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-between">
-
-                {/* Create Recipe Button */}
-                <button
-                    onClick={() => router.push('/recipe')}
-                    className={`${formStyles.button} w-[20%] rounded-none py-8 shadow-lg border-black border-1`}
-                >
-                    Create Recipe
-                </button>
-
-                {/* Profile Button*/}
-                <button
-                    onClick={() => router.push('/profile_management')}
-                    className={`${formStyles.button} w-[20%] rounded-none py-8 shadow-lg border-black border-1`}
-                >
-                    Profile
-                </button>
             </div>
 
         </div>
