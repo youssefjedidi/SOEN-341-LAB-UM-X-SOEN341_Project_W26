@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { layoutStyles, formStyles } from '@/lib/styles';
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { toggleItem, filterRecipesBySearch } from '@/app/utils/recipeUtils';
 
 type Recipe = {
     id: string;
@@ -21,10 +22,9 @@ type Recipe = {
 const restrictionOptions = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Nut-Free", "Halal", "Kosher"];
 const preferenceOptions = ["Quick & Easy", "Budget-Friendly", "High Protein", "Low Carb", "Spicy", "Kid-Friendly", "Meal Prep"];
 
-// Toggle helper for multi-select
-function toggleItem<T>(arr: T[], item: T): T[] {
-    return arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item];
-}
+
+
+
 
 export default function SearchPage() {
     const router = useRouter();
@@ -103,11 +103,7 @@ export default function SearchPage() {
 
 
     // filtering
-    const filteredRecipes = recipes.filter((recipe) => {
-        const q = searchTerm.trim().toLowerCase();
-        if (q === "") return true;
-        return recipe.title.toLowerCase().includes(q);
-    });
+    const filteredRecipes = filterRecipesBySearch(recipes, searchTerm);
 
 
     //Recipe listing with search bar
