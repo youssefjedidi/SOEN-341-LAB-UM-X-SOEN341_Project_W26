@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "tests/filterRecipesBySearch.test.js"  ],
   "exclude": ["node_modules"]
 }
