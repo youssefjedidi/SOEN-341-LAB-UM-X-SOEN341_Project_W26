@@ -157,8 +157,9 @@ export default function SearchPage() {
 
     // filtering (text search is now handled by backend!)
     const filteredRecipes = recipes.filter((recipe) => {
-        // Difficulty filter (show recipes at or below selected difficulty)
-        if (appliedDifficulty > 0 && recipe.difficulty > appliedDifficulty) return false;
+        // Difficulty filter (show recipes at or below selected difficulty;
+        // exclude recipes with no difficulty set when filter is active)
+        if (appliedDifficulty > 0 && (!recipe.difficulty || recipe.difficulty > appliedDifficulty)) return false;
 
         // Max cost filter
         if (appliedMaxCost !== "" && recipe.cost > parseFloat(appliedMaxCost)) return false;
