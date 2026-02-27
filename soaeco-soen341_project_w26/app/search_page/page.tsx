@@ -54,7 +54,9 @@ export default function SearchPage() {
                     rawData = data || [];
                 }
 
-                const formatted: Recipe[] = rawData.map((r: Recipe) => ({
+                // We type it lightly so that preparation_steps does not cause a TS error 
+                // since the UI Recipe type expects prep_steps.
+                const formatted: Recipe[] = rawData.map((r: Recipe & { preparation_steps?: string }) => ({
                     id: r.id,
                     title: r.title,
                     prep_time: r.prep_time,
@@ -62,7 +64,7 @@ export default function SearchPage() {
                     restrictions: r.restrictions || [],
                     cost: r.cost,
                     difficulty: r.difficulty,
-                    prep_steps: r.preparation_steps,
+                    prep_steps: r.preparation_steps || r.prep_steps,
                 }));
 
                 setRecipes(formatted);
