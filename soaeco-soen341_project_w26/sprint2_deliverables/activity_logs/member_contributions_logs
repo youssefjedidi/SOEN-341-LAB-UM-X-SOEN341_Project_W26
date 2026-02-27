@@ -64,3 +64,13 @@
 ###  Pull Requests Reviewed
 
 - Search bar implementation and validation logic integration (30min)
+
+## Team Member: Youssef Jedidi
+
+###  Commits
+- Issue #87: Implemented robust backend recipe search API with Postgres fuzzy matching (pg_trgm) and debounced frontend integration (3hr)
+- Issue #46: Implemented Recipe logic for creating and editing recipes (2hr)
+- Issue #47: Performed front end redesign of search and recipe elements (1hr)
+
+### Pull Requests Reviewed
+- #31: Reviewed Sprint 2 Deliverables (20min)
