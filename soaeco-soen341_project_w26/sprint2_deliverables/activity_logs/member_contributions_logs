@@ -9,3 +9,19 @@
 
 ### Pull Requests Reviewed
 - Added search bar (filter recipes + resets when search is clicked again)            (30min)
+
+## Team Member: Nicolas Correa-Vallenas
+
+###  Commits
+- Update Sprint 2 Deliverables section in README                                    (2min)
+
+
+###  Issues Closed
+[Task] #63 Create filter bar on recipe listing page                                  (2.5hr)
+[Task] #64 Custom Restrictions and Preferences + Backend + Flow Changes              (2hr)
+
+### Pull Requests Reviewed
+- Add filtering, minor styling changes                                               (10min)
+- Frontend filter feature functional                                                 (20min)
+- Front end redesign                                                                 (15min)
+
