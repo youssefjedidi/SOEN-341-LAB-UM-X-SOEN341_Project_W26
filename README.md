@@ -37,6 +37,7 @@ All deliverables for Sprint 1 can be found in the [sprint1_deliverables](./soaec
 All deliverables for Sprint 2 can be found in the [sprint2_deliverables](./soaeco-soen341_project_w26/sprint2_deliverables) folder.
 
 - [Sprint Plan](https://docs.google.com/spreadsheets/d/1gFXMR4HFe72biDcg2fR8ZZdL18Ys39cnYYKRC7U_bZU/edit?gid=637351044#gid=637351044)
+- Acceptance criteria (expected flow) videos can be found in the last collumn of the sprint 1 plan tab
 - Meeting Minutes
 - Activity Logs
 
