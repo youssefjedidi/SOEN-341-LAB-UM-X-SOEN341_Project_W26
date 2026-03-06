@@ -58,7 +58,7 @@ const createEmptyPlanner = (): PlannerState => ({
   Sunday: { Breakfast: null, Lunch: null, Dinner: null, Snack: null },
 });
 //Main planner component
-export default function weekly_planner() {
+export default function WeeklyPlanner() {
   const [planner, setPlanner] = useState<PlannerState>(createEmptyPlanner());
   const [selectedDay, setSelectedDay] = useState<DayType | null>(null);
   const [selectedMeal, setSelectedMeal] = useState<MealType | null>(null);
