@@ -52,4 +52,31 @@ export const layoutStyles = {
   navBase: "px-4 py-3 text-center text-[10px] md:text-xs font-black uppercase tracking-widest transition-all rounded-xl",
   navActive: "bg-stone-900 border-2 border-stone-900 text-white shadow-[2px_2px_0px_#E2725B] -translate-y-1",
   navInactive: "bg-white border-2 border-stone-200 text-stone-600 hover:border-stone-900 hover:text-stone-900 hover:shadow-[2px_2px_0px_#1c1917] hover:-translate-y-1",
+
+  //Added for Weekly PLanner - not sure if we want to keep these in styles.ts or just inline them
+  contentWrapper: "w-full max-w-7xl mx-auto",
+
+  sectionSpacing: "mt-8",
+
+  responsiveTableWrapper: "overflow-x-auto pb-4",
+
+  plannerGrid: "min-w-[1100px] grid grid-cols-8 border-2 border-stone-900 rounded-[28px] overflow-hidden shadow-[8px_8px_0px_#1c1917] bg-white",
+
+  plannerHeaderCell: "border-b-2 border-r-2 border-stone-900 bg-emerald-500 p-4 flex items-center justify-center",
+
+  plannerDayHeaderCell: "border-b-2 border-r-2 last:border-r-0 border-stone-900 bg-emerald-500 p-4 flex items-center justify-center text-center",
+
+  modalOverlay: "fixed inset-0 bg-stone-900/40 z-40",
+
+  modalWrapper: "fixed inset-0 z-50 flex items-center justify-center p-6",
+
+  modalCard: "bg-white border-2 border-stone-900 rounded-[28px] p-8 w-full max-w-md shadow-[8px_8px_0px_#1c1917] relative",
+
+  modalTitle: "text-2xl font-black uppercase tracking-wide text-stone-900 inline-block",
+
+  modalSubtext: "mt-4 text-sm font-bold text-stone-700",
+
+  modalContent: "mt-6 flex flex-col gap-3 max-h-80 overflow-y-auto pr-1",
+
+  modalActions: "mt-6 flex gap-3",
 };

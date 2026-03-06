@@ -41,6 +41,15 @@ All deliverables for Sprint 2 can be found in the [sprint2_deliverables](./soaec
 - Meeting Minutes
 - Activity Logs
 
+## Sprint 3 Deliverables
+
+All deliverables for Sprint 3 can be found in the [sprint3_deliverables](./soaeco-soen341_project_w26/sprint3_deliverables) folder.
+
+- [Sprint Plan](https://docs.google.com/spreadsheets/d/1gFXMR4HFe72biDcg2fR8ZZdL18Ys39cnYYKRC7U_bZU/edit?gid=1508604697#gid=1508604697)
+- Acceptance criteria (expected flow) videos can be found in the last collumn of the sprint 2 plan tab
+- Meeting Minutes
+- Activity Logs
+
 ## Tech Stack
 
 - **Frontend:** React (Next.js App Router)
