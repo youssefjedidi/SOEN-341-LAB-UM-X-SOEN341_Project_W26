@@ -31,6 +31,9 @@ export function Navigation() {
       <Link href="/search_page" className={getNavItemClass('/search_page')}>
         Studio
       </Link>
+      <Link href="/weekly_planner" className={getNavItemClass('/weekly_planner')}>
+        Planner
+      </Link>
       <Link href="/recipe" className={getNavItemClass('/recipe')}>
         Create
       </Link>

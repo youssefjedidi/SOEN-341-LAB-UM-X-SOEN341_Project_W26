@@ -1,0 +1,51 @@
+## Team Member: Mathias Vecchio
+
+###  Commits
+
+###  Issues Closed
+
+### Pull Requests Reviewed
+
+## Team Member: Nicolas Correa-Vallenas
+
+###  Commits
+Front End Weekly Planner + NavBar Update + Read me Update (Sprint 3 Deliverables) 
++ Sprint 3 Deliverables Folder Creation #96                                             (4hr)
+
+###  Issues Closed
+[Task] Create Weekly Planner Page #103                                                (2hr)
+[Task] Organization Controls #104                                                     (30min)
+[Task] Add/Remove Functions #105                                                      (1h)
+[AT 3.1.1] Weekly Meal Planner Display #100                                           (5min)
+[AT 3.2.1] Meal Organization by Day and Type #101                                     (5min)
+[AT 3.3.1] Add and Remove Meals from Planner #102                                     (5min)
+
+### Pull Requests Reviewed
+
+## Team Member: Yana Vassilyev
+
+###  Issues Closed
+
+### Pull Requests Reviewed
+
+### Other contributions
+
+## Team Member: Rami Thabet
+
+###  Issues Closed
+                                                             
+### Other contributions
+
+## Team Member: Ashley Samered
+
+###  Commits
+                   
+###  Issues Closed
+
+###  Pull Requests Reviewed
+
+## Team Member: Youssef Jedidi
+
+###  Commits
+
+### Pull Requests Reviewed
