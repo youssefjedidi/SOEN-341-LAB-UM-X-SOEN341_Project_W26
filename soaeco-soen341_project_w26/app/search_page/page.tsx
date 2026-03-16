@@ -6,11 +6,16 @@ import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toggleItem } from '@/app/utils/recipeUtils';
 
+type Ingredient = {
+    name: string;
+    calories: number;
+};
+
 type Recipe = {
     id: string;
     title: string;
     prep_time: number;
-    ingredients: string[];
+    ingredients: Ingredient[];
     restrictions: string[];
     cost: number;
     prep_steps: string;
@@ -41,7 +46,7 @@ export default function SearchPage() {
             try {
                 let rawData: Recipe[] = [];
                 const q = searchTerm.trim();
-                
+
                 if (q !== "") {
                     // Use the backend API to search database directly
                     const res = await fetch(`/api/search?keyword=${encodeURIComponent(q)}`);
@@ -81,7 +86,7 @@ export default function SearchPage() {
 
     // input box
     const [searchInput, setSearchInput] = useState("");
-    
+
     // Auto-Search with 400ms Debounce
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -142,7 +147,7 @@ export default function SearchPage() {
 
     // Extract unique ingredients from all recipes for the filter dropdown
     const allIngredients = Array.from(
-        new Set(recipes.flatMap((r) => r.ingredients))
+        new Set(recipes.flatMap((r) => r.ingredients.map((ing) => ing.name)))
     ).sort();
 
     // Apply filters function
@@ -180,7 +185,7 @@ export default function SearchPage() {
         if (appliedIngredients.length > 0) {
             const recipeIngredients = recipe.ingredients || [];
             const hasAllIngredients = appliedIngredients.every((ing) =>
-                recipeIngredients.some((ri) => ri.toLowerCase() === ing.toLowerCase())
+                recipeIngredients.some((ri) => ri.name.toLowerCase() === ing.toLowerCase())
             );
             if (!hasAllIngredients) return false;
         }
@@ -499,9 +504,9 @@ export default function SearchPage() {
                             <div className="mb-6">
                                 <h3 className={formStyles.label}>Ingredients</h3>
                                 <ul className="list-disc list-inside text-stone-700 font-bold space-y-1">
-                                    {selectedRecipe.ingredients.map((ing: string, idx: number) => (
+                                    {selectedRecipe.ingredients.map((ing, idx) => (
 
-                                        <li key={idx}>{ing}</li>
+                                        <li key={idx}>{ing.name}</li>
                                     ))}
                                 </ul>
                             </div>
