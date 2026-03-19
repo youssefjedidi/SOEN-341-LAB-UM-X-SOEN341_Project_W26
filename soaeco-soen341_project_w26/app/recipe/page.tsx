@@ -121,7 +121,7 @@ export default function RecipePage() {
         })),
         restrictions,
         cost: Number(cost),
-        prep_steps: prepSteps,
+        preparation_steps: prepSteps,
         difficulty,
         user_id: user.id,
       });

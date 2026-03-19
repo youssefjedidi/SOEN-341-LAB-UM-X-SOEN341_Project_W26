@@ -2,6 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
+import { getUserCalorieGoals } from "./actions";
+import { useEffect } from "react";
+import { useAuth } from "@/lib/useAuth";
+
+
 
 //Meal type slots and days
 type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
@@ -59,6 +64,27 @@ const createEmptyPlanner = (): PlannerState => ({
 });
 //Main planner component
 export default function WeeklyPlanner() {
+
+  const { user } = useAuth();
+
+  const [dailyGoal, setDailyGoal] = useState<number | null>(null);
+  const [weeklyGoal, setWeeklyGoal] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchGoals() {
+      if (!user) return;
+
+      const result = await getUserCalorieGoals(user.id);
+
+      if (result.success) {
+        setDailyGoal(result.dailyCalorieGoal);
+        setWeeklyGoal(result.weeklyCalorieGoal);
+      }
+    }
+
+    fetchGoals();
+  }, [user]);
+
   const [planner, setPlanner] = useState<PlannerState>(createEmptyPlanner());
   const [selectedDay, setSelectedDay] = useState<DayType | null>(null);
   const [selectedMeal, setSelectedMeal] = useState<MealType | null>(null);

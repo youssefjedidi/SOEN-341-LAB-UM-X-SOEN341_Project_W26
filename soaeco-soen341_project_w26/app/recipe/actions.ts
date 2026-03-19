@@ -9,7 +9,7 @@ export const createRecipe = async (data: {
   ingredients: { name: string; calories: number }[];
   restrictions: string[];
   cost: number;
-  prep_steps: string;
+  preparation_steps: string;
   difficulty: number;
   user_id: string;
   tags?: string[];
@@ -23,7 +23,7 @@ export const createRecipe = async (data: {
     restrictions: data.restrictions,
     tags: data.tags || [],
     cost: data.cost,
-    preparation_steps: data.prep_steps,
+    preparation_steps: data.preparation_steps,
     difficulty: data.difficulty,
     user_id: data.user_id,
   }).select().single();
