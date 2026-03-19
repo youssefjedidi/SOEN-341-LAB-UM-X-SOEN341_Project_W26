@@ -80,7 +80,7 @@ export default function WeeklyPlanner() {
     return recipes;
   }, [planner]);
 
-//Modal control functions
+  //Modal control functions
   const openAddModal = (day: DayType, meal: MealType) => {
     setSelectedDay(day);
     setSelectedMeal(meal);
@@ -129,11 +129,11 @@ export default function WeeklyPlanner() {
       <div className={layoutStyles.contentWrapper}>
         <h1 className={layoutStyles.pageTitle}>Weekly Meal Planner</h1>
 
-{/* All styling added to /lib/styles.ts */}
+        {/* All styling added to /lib/styles.ts */}
         <div className={layoutStyles.sectionSpacing}>
           <div className={layoutStyles.responsiveTableWrapper}>
             <div className={layoutStyles.plannerGrid}>
-              <div className={layoutStyles.plannerHeaderCell}>                
+              <div className={layoutStyles.plannerHeaderCell}>
                 <span className="text-xs md:text-sm font-black uppercase tracking-widest text-stone-800">
                   Meal Type
                 </span>
@@ -143,14 +143,14 @@ export default function WeeklyPlanner() {
                 <div
                   key={day}
                   className={layoutStyles.plannerDayHeaderCell}
-                  >
+                >
                   <span className="text-xs md:text-sm font-black uppercase tracking-widest text-stone-900">
                     {day}
                   </span>
                 </div>
               ))}
 
-                            {meals.map((meal) => (
+              {meals.map((meal) => (
                 <div key={meal} className="contents">
                   <div className="border-b-2 border-r-2 border-stone-900 bg-stone-50 p-4 flex items-center justify-center text-center">
                     <span className="text-xs md:text-sm font-black uppercase tracking-widest text-stone-800">
@@ -172,7 +172,7 @@ export default function WeeklyPlanner() {
                           !isLastColumn ? "border-r-2 border-stone-900" : "",
                         ].join(" ")}
                       >
-                      {/* Meal with remove or add button */}
+                        {/* Meal with remove or add button */}
                         {recipe ? (
                           <div className="flex flex-col gap-3">
                             <div className={formStyles.cardListItem}>
@@ -254,9 +254,8 @@ export default function WeeklyPlanner() {
                       type="button"
                       onClick={() => handleAddRecipe(recipe)}
                       disabled={isUsed}
-                      className={`${formStyles.cardListItem} ${
-                        isUsed ? "opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-none hover:border-stone-200" : ""
-                      }`}
+                      className={`${formStyles.cardListItem} ${isUsed ? "opacity-50 cursor-not-allowed hover:translate-y-0 hover:shadow-none hover:border-stone-200" : ""
+                        }`}
                     >
                       <div className="flex items-center justify-between gap-4">
                         <span className="text-sm font-black uppercase tracking-wide">
@@ -272,8 +271,8 @@ export default function WeeklyPlanner() {
               </div>
 
               {/* Extra button row because styles.ts does not define modal action layouts */}
-                <div className={layoutStyles.modalActions}>                
-                  <button
+              <div className={layoutStyles.modalActions}>
+                <button
                   type="button"
                   onClick={closeModal}
                   className={formStyles.secondaryButton}
