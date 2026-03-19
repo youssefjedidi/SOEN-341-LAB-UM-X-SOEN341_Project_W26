@@ -1,15 +1,15 @@
 "use server";
 
-import {  supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 import { Recipe } from "@/lib/types";
 
 export const createRecipe = async (data: {
   title: string;
   prep_time: number;
-  ingredients: string[];
+  ingredients: { name: string; calories: number }[];
   restrictions: string[];
   cost: number;
-  prep_steps: string;
+  preparation_steps: string;
   difficulty: number;
   user_id: string;
   tags?: string[];
@@ -23,7 +23,7 @@ export const createRecipe = async (data: {
     restrictions: data.restrictions,
     tags: data.tags || [],
     cost: data.cost,
-    preparation_steps: data.prep_steps,
+    preparation_steps: data.preparation_steps,
     difficulty: data.difficulty,
     user_id: data.user_id,
   }).select().single();
@@ -37,7 +37,22 @@ export const getRecipes = async () => {
   if (!supabaseAdmin) return { success: false, error: "Server error" };
   const { data: recipes, error } = await supabaseAdmin.from("recipes").select("*");
   if (error) return { success: false, error: error.message };
-  return { success: true, recipes: (recipes || []) as Recipe[] };
+
+  const recipesWithCalories = (recipes || []).map((recipe) => {
+    const totalCalories =
+      recipe.ingredients?.reduce(
+        (sum: number, ing: { name: string; calories: number }) =>
+          sum + (ing.calories || 0),
+        0
+      ) || 0;
+
+    return {
+      ...recipe,
+      total_calories: totalCalories,
+    };
+  });
+
+  return { success: true, recipes: (recipesWithCalories || []) as Recipe[] };
 };
 
 export const deleteRecipe = async (id: string) => {
@@ -52,7 +67,7 @@ export const updateRecipe = async (
   data: {
     title?: string;
     prep_time?: number;
-    ingredients?: string[];
+    ingredients?: { name: string; calories: number }[];
     restrictions?: string[];
     cost?: number;
     prep_steps?: string;
