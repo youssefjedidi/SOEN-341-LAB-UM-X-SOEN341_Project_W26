@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
 import { createRecipe, getRecipes, deleteRecipe, updateRecipe } from "./actions";
 import { useAuth } from "@/lib/useAuth";
-import { Recipe } from "@/lib/types";
+import { Recipe, Ingredient } from "@/lib/types";
 import { useCallback } from "react";
 
 export default function RecipePage() {
@@ -23,7 +23,7 @@ export default function RecipePage() {
   const [ingredientsError, setIngredientsError] = useState("");
   const [stepsError, setStepsError] = useState("");
 
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
 
@@ -57,7 +57,7 @@ export default function RecipePage() {
     setIngredients([...ingredients, ingeredientInput]);
     setIngredientInput("");
 
-     if (ingredientsError) setIngredientsError("");
+    if (ingredientsError) setIngredientsError("");
   };
 
   const removeIngredient = (idx: number) => {
@@ -87,13 +87,16 @@ export default function RecipePage() {
     setStepsError(stepsOk ? "" : "Instructions cannot be empty");
 
     if (!titleOk || !ingredientsOk || !stepsOk) return;
-    
+
     try {
       if (editingRecipeId) {
         const result = await updateRecipe(editingRecipeId, {
           title: recipeTitle,
           prep_time: Number(prepTime),
-          ingredients,
+          ingredients: ingredients.map((name) => ({
+            name,
+            calories: 0
+          })),
           restrictions,
           cost: Number(cost),
           prep_steps: prepSteps,
@@ -112,12 +115,15 @@ export default function RecipePage() {
       const result = await createRecipe({
         title: recipeTitle,
         prep_time: Number(prepTime),
-        ingredients,
+        ingredients: ingredients.map((name) => ({
+          name,
+          calories: 0
+        })),
         restrictions,
         cost: Number(cost),
-        prep_steps: prepSteps,
+        preparation_steps: prepSteps,
         difficulty,
-        user_id: user.id ,
+        user_id: user.id,
       });
 
       if (result.success) {
@@ -155,7 +161,7 @@ export default function RecipePage() {
     setEditingRecipeId(recipe.id);
     setRecipeTitle(recipe.title);
     setPrepTime(recipe.prep_time?.toString() || "");
-    setIngredients(recipe.ingredients || []);
+    setIngredients(recipe.ingredients?.map((ing) => ing.name) || []);
     setRestrictions(recipe.restrictions || []);
     setCost(recipe.cost?.toString() || "");
     setPrepSteps(recipe.preparation_steps || "");
@@ -182,7 +188,7 @@ export default function RecipePage() {
               value={recipeTitle}
               onChange={(e) => setRecipeTitle(e.target.value)}
             />
-            {titleError && <p className="text-red-600 text-sm mt-1">{titleError}</p>}  
+            {titleError && <p className="text-red-600 text-sm mt-1">{titleError}</p>}
           </div>
           {/* Prep Time */}
           <div className="mb-4">
@@ -299,7 +305,7 @@ export default function RecipePage() {
               value={prepSteps}
               onChange={(e) => setPrepSteps(e.target.value)}
             />
-             {stepsError && <p className="text-red-600 text-sm mt-1">{stepsError}</p>}
+            {stepsError && <p className="text-red-600 text-sm mt-1">{stepsError}</p>}
           </div>
 
           {/* Difficulty */}
@@ -352,8 +358,8 @@ export default function RecipePage() {
                   Prep: {recipe.prep_time}m | Cost: ${recipe.cost} | Difficulty: {recipe.difficulty}/5
                 </p>
                 <div className="flex flex-wrap gap-1 mb-2">
-                  {recipe.ingredients?.map((ing: string, i: number) => (
-                    <span key={i} className="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full">{ing}</span>
+                  {recipe.ingredients?.map((ing: Ingredient, i: number) => (
+                    <span key={i} className="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full">{ing.name}</span>
                   ))}
                 </div>
                 <div className="flex flex-wrap gap-1 mb-4 flex-grow">
@@ -362,13 +368,13 @@ export default function RecipePage() {
                   ))}
                 </div>
                 <div className="flex justify-end gap-2 mt-auto">
-                  <button 
+                  <button
                     onClick={() => handleEdit(recipe)}
                     className={formStyles.secondaryButton + " !py-1 !px-3 !flex-none"}
                   >
                     Edit
                   </button>
-                  <button 
+                  <button
                     onClick={async () => {
                       const res = await deleteRecipe(recipe.id);
                       if (res.success) {
