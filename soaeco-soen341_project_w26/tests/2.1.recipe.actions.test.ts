@@ -1,0 +1,127 @@
+/**
+ * @jest-environment node
+ */
+
+const mockSingle = jest.fn();
+const mockSelect = jest.fn(() => ({ single: mockSingle }));
+const mockEq = jest.fn(() => ({ select: mockSelect }));
+const mockInsert = jest.fn(() => ({ select: mockSelect }));
+const mockUpdate = jest.fn(() => ({ eq: mockEq }));
+const mockDeleteEq = jest.fn();
+const mockDelete = jest.fn(() => ({ eq: mockDeleteEq }));
+const mockFrom = jest.fn(() => ({
+  insert: mockInsert,
+  update: mockUpdate,
+  delete: mockDelete,
+}));
+
+jest.mock('../lib/supabase', () => ({
+  supabaseAdmin: {
+    from: (...args: unknown[]) => mockFrom(...args),
+  },
+}));
+
+import { createRecipe, updateRecipe, deleteRecipe } from '../app/recipe/actions';
+
+describe('2.1 Recipe backend actions user story', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    mockDeleteEq.mockResolvedValue({ data: [{ id: 'deleted-id' }], error: null });
+    mockSingle.mockResolvedValue({ data: { id: 'recipe-1' }, error: null });
+  });
+
+  it('creates a new recipe record in database and returns success signal', async () => {
+    const result = await createRecipe({
+      title: 'Stir Fry',
+      prep_time: 20,
+      ingredients: ['Noodles', 'Vegetables'],
+      restrictions: ['Vegan'],
+      cost: 9,
+      prep_steps: 'Cook noodles then stir fry vegetables.',
+      difficulty: 3,
+      user_id: 'user-123',
+    });
+
+    expect(mockFrom).toHaveBeenCalledWith('recipes');
+    expect(mockInsert).toHaveBeenCalledWith({
+      title: 'Stir Fry',
+      prep_time: 20,
+      ingredients: ['Noodles', 'Vegetables'],
+      restrictions: ['Vegan'],
+      tags: [],
+      cost: 9,
+      preparation_steps: 'Cook noodles then stir fry vegetables.',
+      difficulty: 3,
+      user_id: 'user-123',
+    });
+
+    expect(result).toEqual({
+      success: true,
+      recipe: { id: 'recipe-1' },
+    });
+  });
+
+  it('updates existing recipe in database with mapped prep steps field', async () => {
+    const result = await updateRecipe('recipe-77', {
+      title: 'Updated Stir Fry',
+      prep_steps: 'New instructions',
+      ingredients: ['Noodles'],
+      restrictions: [],
+      prep_time: 25,
+      cost: 11,
+      difficulty: 4,
+    });
+
+    expect(mockFrom).toHaveBeenCalledWith('recipes');
+    expect(mockUpdate).toHaveBeenCalledWith({
+      title: 'Updated Stir Fry',
+      preparation_steps: 'New instructions',
+      ingredients: ['Noodles'],
+      restrictions: [],
+      prep_time: 25,
+      cost: 11,
+      difficulty: 4,
+      tags: [],
+    });
+    expect(mockEq).toHaveBeenCalledWith('id', 'recipe-77');
+
+    expect(result).toEqual({
+      success: true,
+      recipe: { id: 'recipe-1' },
+    });
+  });
+
+  it('removes an existing recipe from database and returns success signal', async () => {
+    const result = await deleteRecipe('recipe-delete');
+
+    expect(mockFrom).toHaveBeenCalledWith('recipes');
+    expect(mockDelete).toHaveBeenCalled();
+    expect(mockDeleteEq).toHaveBeenCalledWith('id', 'recipe-delete');
+
+    expect(result).toEqual({
+      success: true,
+      data: [{ id: 'deleted-id' }],
+    });
+  });
+
+  it('signals failure when create returns a database error', async () => {
+    mockSingle.mockResolvedValueOnce({
+      data: null,
+      error: { message: 'Insert failed' },
+    });
+
+    const result = await createRecipe({
+      title: 'Bad Recipe',
+      prep_time: 1,
+      ingredients: ['X'],
+      restrictions: [],
+      cost: 1,
+      prep_steps: 'X',
+      difficulty: 1,
+      user_id: 'user-123',
+    });
+
+    expect(result).toEqual({ success: false, error: 'Insert failed' });
+  });
+});
