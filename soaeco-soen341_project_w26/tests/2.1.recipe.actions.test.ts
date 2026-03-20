@@ -35,10 +35,13 @@ describe('2.1 Recipe backend actions user story', () => {
     const result = await createRecipe({
       title: 'Stir Fry',
       prep_time: 20,
-      ingredients: ['Noodles', 'Vegetables'],
+      ingredients: [
+        { name: 'Noodles', calories: 0 },
+        { name: 'Vegetables', calories: 0 },
+      ],
       restrictions: ['Vegan'],
       cost: 9,
-      prep_steps: 'Cook noodles then stir fry vegetables.',
+      preparation_steps: 'Cook noodles then stir fry vegetables.',
       difficulty: 3,
       user_id: 'user-123',
     });
@@ -47,7 +50,10 @@ describe('2.1 Recipe backend actions user story', () => {
     expect(mockInsert).toHaveBeenCalledWith({
       title: 'Stir Fry',
       prep_time: 20,
-      ingredients: ['Noodles', 'Vegetables'],
+      ingredients: [
+        { name: 'Noodles', calories: 0 },
+        { name: 'Vegetables', calories: 0 },
+      ],
       restrictions: ['Vegan'],
       tags: [],
       cost: 9,
@@ -66,7 +72,7 @@ describe('2.1 Recipe backend actions user story', () => {
     const result = await updateRecipe('recipe-77', {
       title: 'Updated Stir Fry',
       prep_steps: 'New instructions',
-      ingredients: ['Noodles'],
+      ingredients: [{ name: 'Noodles', calories: 0 }],
       restrictions: [],
       prep_time: 25,
       cost: 11,
@@ -77,7 +83,7 @@ describe('2.1 Recipe backend actions user story', () => {
     expect(mockUpdate).toHaveBeenCalledWith({
       title: 'Updated Stir Fry',
       preparation_steps: 'New instructions',
-      ingredients: ['Noodles'],
+      ingredients: [{ name: 'Noodles', calories: 0 }],
       restrictions: [],
       prep_time: 25,
       cost: 11,
@@ -114,10 +120,10 @@ describe('2.1 Recipe backend actions user story', () => {
     const result = await createRecipe({
       title: 'Bad Recipe',
       prep_time: 1,
-      ingredients: ['X'],
+      ingredients: [{ name: 'X', calories: 0 }],
       restrictions: [],
       cost: 1,
-      prep_steps: 'X',
+      preparation_steps: 'X',
       difficulty: 1,
       user_id: 'user-123',
     });
