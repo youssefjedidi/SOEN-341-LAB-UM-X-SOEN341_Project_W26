@@ -1,6 +1,6 @@
 "use server";
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 import type {
     PlannerDayType,
     PlannerMealType,
@@ -25,6 +25,31 @@ export const getUserCalorieGoals = async (userId: string) => {
     };
 };
 
+const getAuthenticatedPlannerUser = async (accessToken: string) => {
+    if (!accessToken) {
+        return {
+            success: false as const,
+            status: "error" as const,
+            message: "Authentication is required.",
+        };
+    }
+
+    const { data, error } = await supabase.auth.getUser(accessToken);
+
+    if (error || !data.user) {
+        return {
+            success: false as const,
+            status: "error" as const,
+            message: "Invalid or expired authentication session.",
+        };
+    }
+
+    return {
+        success: true as const,
+        user: data.user,
+    };
+};
+
 type PlannerActionResult = {
     success: boolean;
     status: "success" | "error";
@@ -34,16 +59,8 @@ type PlannerActionResult = {
 };
 
 export const getWeeklyPlanner = async (
-    userId: string,
+    accessToken: string,
 ): Promise<PlannerActionResult> => {
-    if (!userId || !isUuidLike(userId)) {
-        return {
-            success: false,
-            status: "error",
-            message: "A valid user ID is required.",
-        };
-    }
-
     if (!supabaseAdmin) {
         return {
             success: false,
@@ -52,6 +69,13 @@ export const getWeeklyPlanner = async (
         };
     }
 
+    const authResult = await getAuthenticatedPlannerUser(accessToken);
+
+    if (!authResult.success) {
+        return authResult;
+    }
+
+    const userId = authResult.user.id;
     const { data, error } = await getPlannerRowsForUser(supabaseAdmin, userId);
 
     if (error) {
@@ -73,19 +97,11 @@ export const getWeeklyPlanner = async (
 };
 
 export const updateWeeklyPlannerMeal = async (input: {
-    userId: string;
+    accessToken: string;
     dayOfWeek: PlannerDayType;
     mealType: PlannerMealType;
     recipeId: string | null;
 }): Promise<PlannerActionResult> => {
-    if (!input.userId || !isUuidLike(input.userId)) {
-        return {
-            success: false,
-            status: "error",
-            message: "A valid user ID is required.",
-        };
-    }
-
     if (input.recipeId && !isUuidLike(input.recipeId)) {
         return {
             success: false,
@@ -101,6 +117,14 @@ export const updateWeeklyPlannerMeal = async (input: {
             message: "Planner service is unavailable.",
         };
     }
+
+    const authResult = await getAuthenticatedPlannerUser(input.accessToken);
+
+    if (!authResult.success) {
+        return authResult;
+    }
+
+    const userId = authResult.user.id;
 
     if (input.recipeId) {
         const { data: recipe, error: recipeError } = await supabaseAdmin
@@ -127,7 +151,7 @@ export const updateWeeklyPlannerMeal = async (input: {
         }
     }
 
-    const { error } = await applyPlannerUpdate(supabaseAdmin, input.userId, {
+    const { error } = await applyPlannerUpdate(supabaseAdmin, userId, {
         dayOfWeek: input.dayOfWeek,
         mealType: input.mealType,
         recipeId: input.recipeId,
@@ -142,7 +166,7 @@ export const updateWeeklyPlannerMeal = async (input: {
         };
     }
 
-    const plannerResult = await getWeeklyPlanner(input.userId);
+    const plannerResult = await getWeeklyPlanner(input.accessToken);
 
     if (!plannerResult.success) {
         return plannerResult;

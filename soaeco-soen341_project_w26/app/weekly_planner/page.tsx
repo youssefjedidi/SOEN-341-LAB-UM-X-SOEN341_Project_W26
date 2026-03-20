@@ -9,6 +9,7 @@ import {
 } from "./actions";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/useAuth";
+import { supabase } from "@/lib/supabase";
 import { getRecipes } from "@/app/recipe/actions";
 import type {
   PlannerDayType,
@@ -51,6 +52,16 @@ export default function WeeklyPlanner() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const getAccessToken = async () => {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error || !data.session?.access_token) {
+      return null;
+    }
+
+    return data.session.access_token;
+  };
+
   useEffect(() => {
     async function fetchPlannerPageData() {
       if (!user) {
@@ -63,8 +74,18 @@ export default function WeeklyPlanner() {
       setIsPlannerLoading(true);
       setErrorMessage("");
 
+      const accessToken = await getAccessToken();
+
+      if (!accessToken) {
+        setPlanner(createEmptyPlannerGrid());
+        setAvailableRecipes([]);
+        setErrorMessage("You must be logged in to load your planner.");
+        setIsPlannerLoading(false);
+        return;
+      }
+
       const [plannerResult, recipesResult] = await Promise.all([
-        getWeeklyPlanner(user.id),
+        getWeeklyPlanner(accessToken),
         getRecipes(),
       ]);
 
@@ -149,8 +170,15 @@ export default function WeeklyPlanner() {
     setErrorMessage("");
 
     startSavingTransition(async () => {
+      const accessToken = await getAccessToken();
+
+      if (!accessToken) {
+        setErrorMessage("You must be logged in to update your planner.");
+        return;
+      }
+
       const result = await updateWeeklyPlannerMeal({
-        userId: user.id,
+        accessToken,
         dayOfWeek: selectedDay,
         mealType: selectedMeal,
         recipeId: recipe.id,
@@ -174,8 +202,15 @@ export default function WeeklyPlanner() {
     }
 
     startSavingTransition(async () => {
+      const accessToken = await getAccessToken();
+
+      if (!accessToken) {
+        setErrorMessage("You must be logged in to update your planner.");
+        return;
+      }
+
       const result = await updateWeeklyPlannerMeal({
-        userId: user.id,
+        accessToken,
         dayOfWeek: day,
         mealType: meal,
         recipeId: null,
