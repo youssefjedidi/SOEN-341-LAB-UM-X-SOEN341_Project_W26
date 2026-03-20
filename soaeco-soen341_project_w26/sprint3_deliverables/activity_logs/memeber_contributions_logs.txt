@@ -47,5 +47,12 @@ Front End Weekly Planner + NavBar Update + Read me Update (Sprint 3 Deliverables
 ## Team Member: Youssef Jedidi
 
 ###  Commits
+Weekly planner backend persistence, recipe-based slot assignment, duplicate validation, planner server actions, documentation updates, and test/setup cleanup for Sprint 3 issues #120, #121, and #122  (4hr)
+
+###  Issues Closed
+[3.1.2] Backend: Weekly planner data retrieval and initialization #120                   (1hr 30min)
+[3.2.2] Recipe selection and meal slot assignment #121                                   (30min)
+[3.3.2] Backend: Add, edit, and remove meal slots with duplicate validation #122         (2hr)
 
 ### Pull Requests Reviewed
+#96 - Front End Weekly Planner + NavBar Update + Read me Update (Sprint 3 Deliverables) (Reviewed for UI consistency and functionality) (30min)
