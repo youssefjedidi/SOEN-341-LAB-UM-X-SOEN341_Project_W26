@@ -10,7 +10,10 @@ import {
     applyPlannerUpdate,
     formatPlannerRowsAsGrid,
     getPlannerRowsForUser,
+    isValidMealType,
+    isValidPlannerDay,
     isUuidLike,
+    type WeeklyPlannerRow,
 } from "@/lib/weeklyPlanner";
 
 // Change this function to fetch real calorie goals 
@@ -58,13 +61,11 @@ type PlannerActionResult = {
     initialized?: boolean;
 };
 
-export const getWeeklyPlanner = async (
-    accessToken: string,
-): Promise<PlannerActionResult> => {
+const getPlannerRowsWithAuth = async (accessToken: string) => {
     if (!supabaseAdmin) {
         return {
-            success: false,
-            status: "error",
+            success: false as const,
+            status: "error" as const,
             message: "Planner service is unavailable.",
         };
     }
@@ -75,25 +76,67 @@ export const getWeeklyPlanner = async (
         return authResult;
     }
 
-    const userId = authResult.user.id;
-    const { data, error } = await getPlannerRowsForUser(supabaseAdmin, userId);
+    const { data, error } = await getPlannerRowsForUser(supabaseAdmin, authResult.user.id);
 
     if (error) {
         console.error("Failed to retrieve weekly planner:", error);
         return {
-            success: false,
-            status: "error",
+            success: false as const,
+            status: "error" as const,
             message: "Unable to retrieve weekly planner data at this time.",
         };
+    }
+
+    return {
+        success: true as const,
+        userId: authResult.user.id,
+        rows: (data ?? []) as WeeklyPlannerRow[],
+    };
+};
+
+export const getWeeklyPlanner = async (
+    accessToken: string,
+): Promise<PlannerActionResult> => {
+    const plannerRowsResult = await getPlannerRowsWithAuth(accessToken);
+
+    if (!plannerRowsResult.success) {
+        return plannerRowsResult;
     }
 
     return {
         success: true,
         status: "success",
         message: "Weekly planner data retrieved successfully.",
-        grid: formatPlannerRowsAsGrid(data),
-        initialized: (data?.length ?? 0) === 0,
+        grid: formatPlannerRowsAsGrid(plannerRowsResult.rows),
+        initialized: plannerRowsResult.rows.length === 0,
     };
+};
+
+const hasDuplicateRecipeAssignment = (
+    rows: WeeklyPlannerRow[],
+    dayOfWeek: PlannerDayType,
+    mealType: PlannerMealType,
+    recipeId: string,
+) =>
+    rows.some(
+        (row) =>
+            row.recipe_id === recipeId &&
+            (row.day_of_week !== dayOfWeek || row.meal_type !== mealType),
+    );
+
+const getPlannerOperationMessage = (
+    existingSlot: WeeklyPlannerRow | undefined,
+    recipeId: string | null,
+) => {
+    if (!recipeId) {
+        return "Weekly planner slot cleared successfully.";
+    }
+
+    if (!existingSlot?.recipe_id) {
+        return "Weekly planner slot added successfully.";
+    }
+
+    return "Weekly planner slot updated successfully.";
 };
 
 export const updateWeeklyPlannerMeal = async (input: {
@@ -102,6 +145,22 @@ export const updateWeeklyPlannerMeal = async (input: {
     mealType: PlannerMealType;
     recipeId: string | null;
 }): Promise<PlannerActionResult> => {
+    if (!isValidPlannerDay(input.dayOfWeek)) {
+        return {
+            success: false,
+            status: "error",
+            message: "A valid day of week is required.",
+        };
+    }
+
+    if (!isValidMealType(input.mealType)) {
+        return {
+            success: false,
+            status: "error",
+            message: "A valid meal type is required.",
+        };
+    }
+
     if (input.recipeId && !isUuidLike(input.recipeId)) {
         return {
             success: false,
@@ -118,13 +177,32 @@ export const updateWeeklyPlannerMeal = async (input: {
         };
     }
 
-    const authResult = await getAuthenticatedPlannerUser(input.accessToken);
+    const plannerRowsResult = await getPlannerRowsWithAuth(input.accessToken);
 
-    if (!authResult.success) {
-        return authResult;
+    if (!plannerRowsResult.success) {
+        return plannerRowsResult;
     }
 
-    const userId = authResult.user.id;
+    const existingSlot = plannerRowsResult.rows.find(
+        (row) =>
+            row.day_of_week === input.dayOfWeek && row.meal_type === input.mealType,
+    );
+
+    if (
+        input.recipeId &&
+        hasDuplicateRecipeAssignment(
+            plannerRowsResult.rows,
+            input.dayOfWeek,
+            input.mealType,
+            input.recipeId,
+        )
+    ) {
+        return {
+            success: false,
+            status: "error",
+            message: "This recipe is already assigned to another meal slot this week.",
+        };
+    }
 
     if (input.recipeId) {
         const { data: recipe, error: recipeError } = await supabaseAdmin
@@ -151,7 +229,7 @@ export const updateWeeklyPlannerMeal = async (input: {
         }
     }
 
-    const { error } = await applyPlannerUpdate(supabaseAdmin, userId, {
+    const { error } = await applyPlannerUpdate(supabaseAdmin, plannerRowsResult.userId, {
         dayOfWeek: input.dayOfWeek,
         mealType: input.mealType,
         recipeId: input.recipeId,
@@ -174,6 +252,6 @@ export const updateWeeklyPlannerMeal = async (input: {
 
     return {
         ...plannerResult,
-        message: "Weekly planner updated successfully.",
+        message: getPlannerOperationMessage(existingSlot, input.recipeId),
     };
 };
