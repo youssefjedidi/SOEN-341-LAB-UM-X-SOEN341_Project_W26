@@ -53,6 +53,8 @@ export default function WeeklyPlanner() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const getAccessToken = async () => {
+    // Server actions authenticate planner requests with the Supabase access token,
+    // so the page fetches the current browser session token before calling them.
     const { data, error } = await supabase.auth.getSession();
 
     if (error || !data.session?.access_token) {
@@ -127,6 +129,8 @@ export default function WeeklyPlanner() {
   const usedRecipeIds = useMemo(() => {
     const recipes = new Set<string>();
 
+    // The UI blocks duplicate selections early, while the server action performs
+    // the real enforcement before any database write.
     for (const day of days) {
       for (const meal of meals) {
         const recipeId = planner[day][meal].recipeId;

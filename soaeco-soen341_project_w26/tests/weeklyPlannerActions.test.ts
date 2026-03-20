@@ -21,6 +21,8 @@ jest.mock("../lib/weeklyPlanner", () => {
 
   return {
     ...actual,
+    // These two helpers are mocked so the tests can focus on action behavior
+    // without depending on a live planner table or real database writes.
     getPlannerRowsForUser: jest.fn(),
     applyPlannerUpdate: jest.fn(),
   };
@@ -34,6 +36,7 @@ describe("weekly planner actions", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Every action call starts by resolving the current user from the access token.
     (supabase.auth.getUser as jest.Mock).mockResolvedValue({
       data: { user: { id: userId } },
       error: null,
@@ -59,6 +62,8 @@ describe("weekly planner actions", () => {
   it("rejects duplicate recipe assignments anywhere else in the same week", async () => {
     (getPlannerRowsForUser as jest.Mock).mockResolvedValue({
       data: [
+        // The duplicate lives in a different slot, which should cause the action
+        // to reject the new assignment before any database update is attempted.
         {
           day_of_week: "Tuesday",
           meal_type: "Lunch",
@@ -87,10 +92,12 @@ describe("weekly planner actions", () => {
   it("adds a new planner slot and returns an add message", async () => {
     (getPlannerRowsForUser as jest.Mock)
       .mockResolvedValueOnce({
+        // First read: the slot is empty before the write.
         data: [],
         error: null,
       })
       .mockResolvedValueOnce({
+        // Second read: the action reloads the planner after the write succeeds.
         data: [
           {
             day_of_week: "Monday",
@@ -130,6 +137,8 @@ describe("weekly planner actions", () => {
     (getPlannerRowsForUser as jest.Mock)
       .mockResolvedValueOnce({
         data: [
+          // This existing row makes the action treat the change as a replacement
+          // rather than a brand-new slot assignment.
           {
             day_of_week: "Monday",
             meal_type: "Breakfast",
@@ -179,6 +188,7 @@ describe("weekly planner actions", () => {
     (getPlannerRowsForUser as jest.Mock)
       .mockResolvedValueOnce({
         data: [
+          // The initial read shows a filled slot that will be deleted.
           {
             day_of_week: "Monday",
             meal_type: "Breakfast",
@@ -189,6 +199,7 @@ describe("weekly planner actions", () => {
         error: null,
       })
       .mockResolvedValueOnce({
+        // After the delete, the planner is empty again.
         data: [],
         error: null,
       });

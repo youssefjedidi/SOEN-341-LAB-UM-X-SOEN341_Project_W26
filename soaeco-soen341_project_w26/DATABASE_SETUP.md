@@ -55,7 +55,7 @@ npm run setup-db
 The script:
 1. Creates a PostgreSQL function that can execute SQL
 2. Uses that function to run your migration files
-3. Creates the `user_profiles` table with all policies
+3. Creates the application tables and policies, including `user_profiles`, `recipes`, and `weekly_planner`
 
 ## Future Updates
 
@@ -65,6 +65,15 @@ When the database schema changes:
 3. Your database updates automatically!
 
 No manual SQL needed after the initial setup.
+
+## Weekly Planner Schema
+
+The current migration set also provisions the weekly planner backend:
+
+- `weekly_planner` stores planner entries by `user_id`, `day_of_week`, `meal_type`, and `recipe_id`
+- one unique planner row is allowed per user/day/meal slot
+- planner rows are protected with row-level security policies
+- recipe assignments can be safely added, replaced, or cleared by rerunning `npm run setup-db`
 
 ---
 

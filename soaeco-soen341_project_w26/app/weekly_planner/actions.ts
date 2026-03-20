@@ -76,6 +76,8 @@ const getPlannerRowsWithAuth = async (accessToken: string) => {
         return authResult;
     }
 
+    // Every planner read goes through the authenticated user so we never trust
+    // a client-provided user ID when loading weekly planner data.
     const { data, error } = await getPlannerRowsForUser(supabaseAdmin, authResult.user.id);
 
     if (error) {
@@ -118,6 +120,8 @@ const hasDuplicateRecipeAssignment = (
     mealType: PlannerMealType,
     recipeId: string,
 ) =>
+    // Duplicates are allowed only when the recipe stays in the same slot
+    // during an edit; assigning it to any other slot in the same week is rejected.
     rows.some(
         (row) =>
             row.recipe_id === recipeId &&
@@ -205,6 +209,8 @@ export const updateWeeklyPlannerMeal = async (input: {
     }
 
     if (input.recipeId) {
+        // Validate the referenced recipe before writing the planner row so we do
+        // not persist planner slots pointing at missing recipes.
         const { data: recipe, error: recipeError } = await supabaseAdmin
             .from("recipes")
             .select("id")
@@ -252,6 +258,8 @@ export const updateWeeklyPlannerMeal = async (input: {
 
     return {
         ...plannerResult,
+        // The response message tells the UI whether this was an add, edit, or clear
+        // without forcing the page to infer that from previous local state.
         message: getPlannerOperationMessage(existingSlot, input.recipeId),
     };
 };
