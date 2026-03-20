@@ -16,3 +16,23 @@ export interface Recipe {
   user_id: string;
   created_at?: string;
 }
+
+export type PlannerMealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
+
+export type PlannerDayType =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+export type WeeklyPlannerGrid = {
+  [day in PlannerDayType]: {
+    [meal in PlannerMealType]: {
+      recipeId: string | null;
+      recipeTitle: string | null;
+    };
+  };
+};

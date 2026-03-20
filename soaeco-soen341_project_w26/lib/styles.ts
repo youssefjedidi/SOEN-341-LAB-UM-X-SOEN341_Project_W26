@@ -24,6 +24,9 @@ export const formStyles = {
   // Success message box
   successBox: "bg-emerald-100 border-2 border-emerald-900 text-emerald-900 px-4 py-3 rounded-xl mb-4 text-sm font-bold shadow-[4px_4px_0px_#14532d]",
 
+  // Shared spacing wrapper for stacked status messages
+  statusMessage: "mb-4",
+
   // Link styling
   link: "text-orange-600 hover:text-orange-500 font-bold underline transition-colors",
 
