@@ -25,12 +25,14 @@ export default function ProfileManagement() {
    // State for text inputs
    const [newRestriction, setNewRestriction] = useState('');
    const [newPreference, setNewPreference] = useState('');
+   const [dailyCalorieGoal, setDailyCalorieGoal] = useState('');
 
    // State for UI feedback
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState('');
    const [success, setSuccess] = useState('');
 
+  
    // Redirect to login if not authenticated
    useEffect(() => {
       if (!authLoading && !user) {
@@ -45,7 +47,7 @@ export default function ProfileManagement() {
 
          const { data, error } = await supabase
             .from('user_profiles')
-            .select('dietary_restrictions, dietary_preferences, custom_restrictions, custom_preferences')
+            .select('dietary_restrictions, dietary_preferences, custom_restrictions, custom_preferences, daily_calorie_goal')
             .eq('user_id', user.id)
             .single();
 
@@ -62,12 +64,12 @@ export default function ProfileManagement() {
          if (data) {
          const savedRestrictions = data.dietary_restrictions || [];
          const savedPreferences = data.dietary_preferences || [];
-
          const customRestrictions = data.custom_restrictions || [];
          const customPreferences = data.custom_preferences || [];
 
          setRestrictions(savedRestrictions);
          setPreferences(savedPreferences);
+         setDailyCalorieGoal(data.daily_calorie_goal ? String(data.daily_calorie_goal) : '');
 
          setRestrictionOptions([...INITIAL_DIETARY_RESTRICTIONS, ...customRestrictions]);
          setPreferenceOptions([...INITIAL_DIETARY_PREFERENCES, ...customPreferences]);
@@ -172,9 +174,52 @@ export default function ProfileManagement() {
       { user_id: user.id, custom_preferences: nextCustom },
       { onConflict: 'user_id' }
    );
-
    if (error) setError(error.message);
    };
+
+const addDailyCalorieGoal = async () => {
+  if (!user) return;
+
+  const parsedDailyGoal =
+    dailyCalorieGoal.trim() === '' ? null : Number(dailyCalorieGoal);
+
+  if (
+    dailyCalorieGoal.trim() !== '' &&
+    (
+      parsedDailyGoal === null ||
+      !Number.isFinite(parsedDailyGoal) ||
+      parsedDailyGoal <= 0
+    )
+  ) {
+    setError('Please enter a valid max calorie per day');
+    return;
+  }
+
+  setLoading(true);
+  setError('');
+  setSuccess('');
+
+  const { error } = await supabase
+    .from('user_profiles')
+    .upsert(
+      {
+        user_id: user.id,
+        daily_calorie_goal: parsedDailyGoal,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: 'user_id' }
+    );
+
+  if (error) {
+    setError(error.message);
+  } else {
+    setSuccess('Max calories per day saved successfully!');
+    setTimeout(() => setSuccess(''), 3000);
+  }
+
+  setLoading(false);
+};
+
    // Handle save button
    const handleSave = async () => {
       if (!user) return;
@@ -188,6 +233,19 @@ export default function ProfileManagement() {
          setError('Please select at least one dietary preference (or "None")');
          return;
       }
+const parsedDailyGoal = dailyCalorieGoal.trim() === '' ? null : Number(dailyCalorieGoal);
+
+if (
+  dailyCalorieGoal.trim() !== '' &&
+  (
+    parsedDailyGoal === null ||
+    !Number.isFinite(parsedDailyGoal) ||
+    parsedDailyGoal <= 0
+  )
+) {
+  setError('Please enter a valid max calorie per day');
+  return;
+}
 
       setLoading(true);
       setError('');
@@ -208,6 +266,7 @@ export default function ProfileManagement() {
                .update({
                   dietary_restrictions: restrictions,
                   dietary_preferences: preferences,
+                  daily_calorie_goal: parsedDailyGoal,
                   updated_at: new Date().toISOString()
                })
                .eq('user_id', user.id);
@@ -220,7 +279,8 @@ export default function ProfileManagement() {
                .insert({
                   user_id: user.id,
                   dietary_restrictions: restrictions,
-                  dietary_preferences: preferences
+                  dietary_preferences: preferences,
+                  daily_calorie_goal: parsedDailyGoal
                });
 
             if (insertError) throw insertError;
@@ -256,120 +316,159 @@ export default function ProfileManagement() {
       return null;
    }
 
-   return (
-      <div className={layoutStyles.pageContainer}>
-         <div className={layoutStyles.formCard + " !max-w-3xl"}>
-            <h1 className={layoutStyles.pageTitle + " text-center block"}>
-               Profile Management
-            </h1>
+ return (
+  <div className={layoutStyles.pageContainer}>
+    <div className={layoutStyles.formCard + " !max-w-3xl"}>
+<h1 className={layoutStyles.pageTitle + " text-center block"}>
+  PROFILE MANAGEMENT
+</h1>
 
-            {/* Success/Error Messages */}
-            {success && (
-               <div className={formStyles.successBox}>
-                  {success}
-               </div>
-            )}
-            {error && (
-               <div className={formStyles.errorBox}>
-                  {error}
-               </div>
-            )}
+      {success && (
+        <div className={formStyles.successBox}>
+          {success}
+        </div>
+      )}
 
-            {/* Grid Container */}
-            <div className="grid grid-cols-2 gap-4 text-gray-700">
-               {/* Dietary Restrictions */}
-               <div className="flex flex-col">
-                  <h2 className="text-xl font-bold">Dietary Restrictions</h2>
-                  <h2 className="text-xs text-gray-400 mb-3">
-                     (eg. allergies, religious restrictions, etc.)
-                  </h2>
-                  <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-90 overflow-y-auto mb-3">
-                     {restrictionOptions.map((item) => (
-                        <label key={item} className="flex items-center gap-4 cursor-pointer hover:bg-emerald-50 p-2 rounded">
-                           <input
-                              type="checkbox"
-                              className="h-4 w-4 accent-emerald-600 cursor-pointer"
-                              checked={restrictions.includes(item)}
-                              onChange={() => handleToggle(item, 'restriction')}
-                           />
-                           <span>{item}</span>
-                        </label>
-                     ))}
-                  </div>
-                  <div className="flex gap-3 mb-3">
-                  <input
-                  type="text"
-                  value={newRestriction}
-                  onChange={(e) => setNewRestriction(e.target.value)}
-                  placeholder="Add restriction..."
-                  className={formStyles.input + " flex-1 !w-auto !py-2 !px-4 !text-sm"}
-                  disabled={loading}
-                  /> 
-               <button type="button" onClick={addRestriction} className={formStyles.button + " flex-none !w-auto !py-2 !px-6 !text-xs"} disabled={loading}>
-               Add
-               </button>
-               </div>
-               </div>
+      {error && (
+        <div className={formStyles.errorBox}>
+          {error}
+        </div>
+      )}
 
-               {/* Dietary Preferences */}
-               <div className="flex flex-col">
-                  <h2 className="text-xl font-bold">Dietary Preferences</h2>
-                  <h2 className="text-xs text-gray-400 mb-3">
-                     (What you don&apos;t like to eat)
-                  </h2>
-                  <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-90 overflow-y-auto mb-3">
-                     {preferenceOptions.map((item) => (
-                        <label key={item} className="flex items-center gap-4 cursor-pointer hover:bg-emerald-50 p-2 rounded">
-                           <input
-                              type="checkbox"
-                              className="h-4 w-4 accent-emerald-600 cursor-pointer"
-                              checked={preferences.includes(item)}
-                              onChange={() => handleToggle(item, 'preference')}
-                           />
-                           <span>{item}</span>
-                        </label>
-                     ))}
-                  </div>
-                  <div className="flex gap-3 mb-3">
-                  <input
-                  type="text"
-                  value={newPreference}
-                  onChange={(e) => setNewPreference(e.target.value)}
-                  placeholder="Add preference..."
-                  className={formStyles.input + " flex-1 !w-auto !py-2 !px-4 !text-sm"}
-                  disabled={loading}
-                  />
-                  <button
-                  type="button"
-                  onClick={addPreference}
-                  className={formStyles.button + " flex-none !w-auto !py-2 !px-6 !text-xs"}
-                  disabled={loading}
-                  >   
-                  Add
-                  </button>
-                  </div>
-               </div>
-            </div>
+      <div className="grid grid-cols-2 gap-4 text-gray-700">
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold">Dietary Restrictions</h2>
+          <h2 className="text-xs text-gray-400 mb-3">
+            (eg. allergies, religious restrictions, etc.)
+          </h2>
 
-            {/* Buttons */}
-            <div className="flex w-full mt-8 gap-4 border-t-2 border-emerald-100 pt-6">
-               <button
-                  className={formStyles.button + " !w-auto !flex-[2] !mt-0 !py-3"}
-                  onClick={handleSave}
-                  disabled={loading}
-               >
-                  {loading ? 'Saving...' : 'Save'}
-               </button>
+          <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-90 overflow-y-auto mb-3">
+            {restrictionOptions.map((item) => (
+              <label
+                key={item}
+                className="flex items-center gap-4 cursor-pointer hover:bg-emerald-50 p-2 rounded"
+              >
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-emerald-600 cursor-pointer"
+                  checked={restrictions.includes(item)}
+                  onChange={() => handleToggle(item, 'restriction')}
+                />
+                <span>{item}</span>
+              </label>
+            ))}
+          </div>
 
-               <button
-                  className={formStyles.secondaryButton + " !w-auto !flex-1 !mt-0 !py-3 bg-white"}
-                  onClick={handleCancel}
-                  disabled={loading}
-               >
-                  Cancel
-               </button>
-            </div>
-         </div>
+          <div className="flex gap-3 mb-3">
+            <input
+              type="text"
+              value={newRestriction}
+              onChange={(e) => setNewRestriction(e.target.value)}
+              placeholder="Add restriction..."
+              className={formStyles.input + " flex-1 !w-auto !py-2 !px-4 !text-sm"}
+              disabled={loading}
+            />
+            <button
+              type="button"
+              onClick={addRestriction}
+              className={formStyles.button + " flex-none !w-auto !py-2 !px-6 !text-xs"}
+              disabled={loading}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold">Dietary Preferences</h2>
+          <h2 className="text-xs text-gray-400 mb-3">
+            (What you don&apos;t like to eat)
+          </h2>
+
+          <div className="bg-white p-2 rounded-lg shadow-xl border-2 border-emerald-800 max-h-90 overflow-y-auto mb-3">
+            {preferenceOptions.map((item) => (
+              <label
+                key={item}
+                className="flex items-center gap-4 cursor-pointer hover:bg-emerald-50 p-2 rounded"
+              >
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-emerald-600 cursor-pointer"
+                  checked={preferences.includes(item)}
+                  onChange={() => handleToggle(item, 'preference')}
+                />
+                <span>{item}</span>
+              </label>
+            ))}
+          </div>
+
+          <div className="flex gap-3 mb-3">
+            <input
+              type="text"
+              value={newPreference}
+              onChange={(e) => setNewPreference(e.target.value)}
+              placeholder="Add preference..."
+              className={formStyles.input + " flex-1 !w-auto !py-2 !px-4 !text-sm"}
+              disabled={loading}
+            />
+            <button
+              type="button"
+              onClick={addPreference}
+              className={formStyles.button + " flex-none !w-auto !py-2 !px-6 !text-xs"}
+              disabled={loading}
+            >
+              Add
+            </button>
+          </div>
+        </div>
       </div>
-   );
+
+      <div className="mt-6 rounded-lg border-2 border-emerald-800 bg-white p-4 shadow-xl">
+        <h2 className="text-xl font-bold text-gray-700">Max Calories Per Day</h2>
+        <p className="text-xs text-gray-400 mb-3">
+          Set your daily calorie limit for the planner
+        </p>
+
+        <div className="flex gap-3 items-center">
+          <input
+            type="number"
+            min="1"
+            value={dailyCalorieGoal}
+            onChange={(e) => setDailyCalorieGoal(e.target.value)}
+            placeholder="e.g. 1800"
+            className={formStyles.input + " !mt-0 flex-1"}
+            disabled={loading}
+          />
+
+          <button
+            type="button"
+            onClick={addDailyCalorieGoal}
+            className={formStyles.button + " !w-auto !mt-0 !py-2 !px-6 !text-xs"}
+            disabled={loading}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      <div className="flex w-full mt-8 gap-4 border-t-2 border-emerald-100 pt-6">
+        <button
+          className={formStyles.button + " !w-auto !flex-[2] !mt-0 !py-3"}
+          onClick={handleSave}
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Save'}
+        </button>
+
+        <button
+          className={formStyles.secondaryButton + " !w-auto !flex-1 !mt-0 !py-3 bg-white"}
+          onClick={handleCancel}
+          disabled={loading}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+);
 }
