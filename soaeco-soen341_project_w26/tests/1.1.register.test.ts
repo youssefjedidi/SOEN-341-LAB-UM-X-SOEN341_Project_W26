@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import RegisterPage from '../app/register/page';
 import { supabase } from '../lib/supabase';
 
