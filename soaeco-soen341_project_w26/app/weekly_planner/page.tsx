@@ -139,12 +139,12 @@ export default function WeeklyPlanner() {
     const calories = new Map<string, number>();
 
     for (const recipe of availableRecipes) {
-      const totalCalories =
-        recipe.ingredients?.reduce(
-          (sum: number, ingredient: any) =>
-            sum + (Number(ingredient.calories) || 0),
-          0,
-        ) || 0;
+const totalCalories =
+  recipe.ingredients?.reduce(
+    (sum: number, ingredient: { calories?: number | string }) =>
+      sum + (Number(ingredient.calories) || 0),
+    0,
+  ) || 0;
 
       calories.set(recipe.id, totalCalories);
     }
@@ -477,12 +477,12 @@ return (
             <div className={layoutStyles.modalContent}>
               {availableRecipes.map((recipe) => {
                 const isUsed = usedRecipeIds.has(recipe.id);
-                const totalCalories =
-                  recipe.ingredients?.reduce(
-                    (sum: number, ingredient: any) =>
-                      sum + (Number(ingredient.calories) || 0),
-                    0,
-                  ) || 0;
+const totalCalories =
+  recipe.ingredients?.reduce(
+    (sum: number, ingredient: { calories?: number | string }) =>
+      sum + (Number(ingredient.calories) || 0),
+    0,
+  ) || 0;
 
                 return (
                   <button
