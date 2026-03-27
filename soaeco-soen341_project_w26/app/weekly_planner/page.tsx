@@ -3,7 +3,6 @@
 import { useMemo, useState, useTransition } from "react";
 import { formStyles, layoutStyles } from "@/lib/styles";
 import {
-  // getUserCalorieGoals,
   getWeeklyPlanner,
   updateWeeklyPlannerMeal,
   resetWeeklyPlanner,
