@@ -16,9 +16,6 @@ import {
     type WeeklyPlannerRow,
 } from "@/lib/weeklyPlanner";
 
-// Change this function to fetch real calorie goals 
-// Once backend for weekly planner is implemented.
-
 
 const getAuthenticatedPlannerUser = async (accessToken: string) => {
     if (!accessToken) {
