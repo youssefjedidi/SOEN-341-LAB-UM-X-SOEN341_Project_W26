@@ -6,6 +6,7 @@ import {
   // getUserCalorieGoals,
   getWeeklyPlanner,
   updateWeeklyPlannerMeal,
+  resetWeeklyPlanner,
 } from "./actions";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/useAuth";
@@ -282,6 +283,32 @@ const totalCalories =
       setInfoMessage(result.message);
     });
   };
+  // Resets the entire weekly planner (backend + frontend sync)
+  const handleResetPlanner = () => {
+    if (!user) {
+      setErrorMessage("You must be logged in to update your planner.");
+      return;
+    }
+
+    startSavingTransition(async () => {
+      const accessToken = await getAccessToken();
+
+      if (!accessToken) {
+        setErrorMessage("You must be logged in to update your planner.");
+        return;
+      }
+
+      const result = await resetWeeklyPlanner(accessToken);
+
+      if (!result.success || !result.grid) {
+        setErrorMessage(result.message);
+        return;
+      }
+
+      setPlanner(result.grid);
+      setInfoMessage(result.message);
+    });
+  };
 
   const getBarColorClass = (total: number) => {
     if (!dailyGoal || dailyGoal <= 0) return "bg-stone-400";
@@ -292,7 +319,7 @@ const totalCalories =
     if (ratio >= 0.75) return "bg-yellow-400";
     return "bg-emerald-500";
   };
-
+  
 return (
   <div className={layoutStyles.pageContainer}>
     <div className={layoutStyles.contentWrapper}>
@@ -452,7 +479,16 @@ return (
         </div>
       </div>
     </div>
-
+  {/* Reset Weekly Planner Button */}
+  <div className="w-full flex justify-end mt-10">
+    <button
+      type="button"
+      onClick={handleResetPlanner}
+      className={formStyles.button}
+    >
+      Reset Weekly Planner
+    </button>
+  </div>
     {isModalOpen && selectedDay && selectedMeal && (
       <>
         <div className={layoutStyles.modalOverlay} onClick={closeModal} />

@@ -263,3 +263,47 @@ export const updateWeeklyPlannerMeal = async (input: {
         message: getPlannerOperationMessage(existingSlot, input.recipeId),
     };
 };
+export const resetWeeklyPlanner = async (
+  accessToken: string,
+): Promise<PlannerActionResult> => {
+  if (!supabaseAdmin) {
+    return {
+      success: false,
+      status: "error",
+      message: "Planner service is unavailable.",
+    };
+  }
+
+  const plannerRowsResult = await getPlannerRowsWithAuth(accessToken);
+
+  if (!plannerRowsResult.success) {
+    return plannerRowsResult;
+  }
+
+  const userId = plannerRowsResult.userId;
+
+  const { error } = await supabaseAdmin
+    .from("weekly_planner")
+    .update({ recipe_id: null })
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Failed to reset weekly planner:", error);
+    return {
+      success: false,
+      status: "error",
+      message: "Unable to reset weekly planner at this time.",
+    };
+  }
+
+  const plannerResult = await getWeeklyPlanner(accessToken);
+
+  if (!plannerResult.success) {
+    return plannerResult;
+  }
+
+  return {
+    ...plannerResult,
+    message: "Weekly planner reset successfully.",
+  };
+};
