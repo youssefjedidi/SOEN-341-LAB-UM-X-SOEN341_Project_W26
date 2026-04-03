@@ -125,12 +125,14 @@ export default function SearchPage() {
         setFilterDifficulty(0);
         setFilterMaxCost("");
         setFilterMaxTime("");
+        setFilterMaxCalories("");
         setSelectedRestrictions([]);
         setSelectedIngredients([]);
         // Also clear applied filters
         setAppliedDifficulty(0);
         setAppliedMaxCost("");
         setAppliedMaxTime("");
+        setAppliedMaxCalories("");
         setAppliedRestrictions([]);
         setAppliedIngredients([]);
     }
@@ -185,7 +187,6 @@ export default function SearchPage() {
             return false;
         }
 
-    return true;
         // Restrictions filter - recipe must have ALL selected restrictions
         if (appliedRestrictions.length > 0) {
             const recipeRestrictions = recipe.restrictions || [];
