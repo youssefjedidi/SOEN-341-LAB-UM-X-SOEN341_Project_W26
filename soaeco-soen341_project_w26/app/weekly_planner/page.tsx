@@ -122,8 +122,18 @@ export default function WeeklyPlanner() {
       setIsPlannerLoading(false);
     }
 
+  fetchPlannerPageData();
+
+  const handleFocus = () => {
     fetchPlannerPageData();
-  }, [user]);
+  };
+
+  window.addEventListener("focus", handleFocus);
+
+  return () => {
+    window.removeEventListener("focus", handleFocus);
+  };
+}, [user]);
 
   const recipeTitleById = useMemo(() => {
     const titles = new Map<string, string>();
@@ -195,6 +205,15 @@ const totalCalories =
 
     return totals;
   }, [planner, recipeCaloriesById]);
+
+    //  weekly average calories across 7 days
+const weeklyTotalCalories = useMemo(() => {
+  return days.reduce((sum, day) => sum + dayCalories[day], 0);
+}, [dayCalories]);
+
+const weeklyGoal = useMemo(() => {
+  return dailyGoal ? dailyGoal * 7 : null;
+}, [dailyGoal]);
 
   //Modal control functions
   const openAddModal = (day: DayType, meal: MealType) => {
@@ -474,10 +493,53 @@ return (
                 </div>
               );
             })}
+
+{/* Weekly average row */}
+  <div className="border-t-2 border-r-2 border-stone-900 bg-stone-100 p-4 flex items-center justify-center text-center">
+   <span className="text-xs md:text-sm font-black uppercase tracking-widest text-stone-800">
+      Weekly Avg
+    </span>
+    </div>
+
+<div className="col-span-7 border-t-2 border-stone-900 bg-[#FDFBF7] p-4 flex flex-col gap-3 justify-center">
+  <div className="flex items-center justify-between gap-2">
+    <span className="text-xs font-black uppercase tracking-widest text-stone-700">
+      {weeklyTotalCalories} / {weeklyGoal ?? "—"} cal
+    </span>
+  </div>
+
+  <div className="h-3 w-full overflow-hidden rounded-full bg-stone-200">
+    <div
+      className={`h-full transition-all duration-300 ${
+        weeklyGoal && weeklyGoal > 0
+          ? getBarColorClass(weeklyTotalCalories / 7)
+          : "bg-stone-400"
+      }`}
+      style={{
+        width: `${
+          weeklyGoal && weeklyGoal > 0
+            ? Math.min((weeklyTotalCalories / weeklyGoal) * 100, 100)
+            : 0
+        }%`,
+      }}
+    />
+  </div>
+
+  <p className="text-[10px] font-black uppercase tracking-widest text-stone-500">
+    {!weeklyGoal || weeklyGoal <= 0
+      ? "No max set"
+      : weeklyTotalCalories >= weeklyGoal
+        ? "At or above weekly max"
+        : weeklyTotalCalories >= weeklyGoal * 0.75
+          ? "Near weekly max"
+          : "Within weekly limit"}
+  </p>
+</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
   {/* Reset Weekly Planner Button */}
   <div className="w-full flex justify-end mt-10">
     <button
@@ -512,12 +574,12 @@ return (
             <div className={layoutStyles.modalContent}>
               {availableRecipes.map((recipe) => {
                 const isUsed = usedRecipeIds.has(recipe.id);
-const totalCalories =
-  recipe.ingredients?.reduce(
-    (sum: number, ingredient: { calories?: number | string }) =>
-      sum + (Number(ingredient.calories) || 0),
-    0,
-  ) || 0;
+                const totalCalories =
+                recipe.ingredients?.reduce(
+                   (sum: number, ingredient: { calories?: number | string }) =>
+                     sum + (Number(ingredient.calories) || 0),
+                        0,
+                         ) || 0;
 
                 return (
                   <button
