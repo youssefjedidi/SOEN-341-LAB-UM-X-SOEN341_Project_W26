@@ -105,7 +105,7 @@ export default function SearchPage() {
     const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
     const [restrictionsOpen, setRestrictionsOpen] = useState(false);
     const [ingredientsOpen, setIngredientsOpen] = useState(false);
-
+    const [filterMaxCalories, setFilterMaxCalories] = useState("");
     const dropdownWrapRef = useRef<HTMLDivElement>(null);
 
     // Close dropdowns when clicking outside
@@ -144,6 +144,7 @@ export default function SearchPage() {
     const [appliedMaxTime, setAppliedMaxTime] = useState("");
     const [appliedRestrictions, setAppliedRestrictions] = useState<string[]>([]);
     const [appliedIngredients, setAppliedIngredients] = useState<string[]>([]);
+    const [appliedMaxCalories, setAppliedMaxCalories] = useState("");
 
     // Extract unique ingredients from all recipes for the filter dropdown
     const allIngredients = Array.from(
@@ -155,6 +156,7 @@ export default function SearchPage() {
         setAppliedDifficulty(filterDifficulty);
         setAppliedMaxCost(filterMaxCost);
         setAppliedMaxTime(filterMaxTime);
+        setAppliedMaxCalories(filterMaxCalories);
         setAppliedRestrictions([...selectedRestrictions]);
         setAppliedIngredients([...selectedIngredients]);
         setFiltersOpen(false);
@@ -162,6 +164,12 @@ export default function SearchPage() {
 
     // filtering (text search is now handled by backend!)
     const filteredRecipes = recipes.filter((recipe) => {
+        // sum calories to filter
+               const totalCalories = (recipe.ingredients || []).reduce(
+            (sum, ing) => sum + (Number(ing.calories) || 0),
+            0
+        );
+       
         // Difficulty filter (show recipes at or below selected difficulty;
         // exclude recipes with no difficulty set when filter is active)
         if (appliedDifficulty > 0 && (!recipe.difficulty || recipe.difficulty > appliedDifficulty)) return false;
@@ -172,6 +180,12 @@ export default function SearchPage() {
         // Max time filter
         if (appliedMaxTime !== "" && recipe.prep_time > parseInt(appliedMaxTime)) return false;
 
+        // Max calories filter
+        if (appliedMaxCalories !== "" && totalCalories > parseFloat(appliedMaxCalories)) {
+            return false;
+        }
+
+    return true;
         // Restrictions filter - recipe must have ALL selected restrictions
         if (appliedRestrictions.length > 0) {
             const recipeRestrictions = recipe.restrictions || [];
@@ -316,6 +330,23 @@ export default function SearchPage() {
                                 </div>
                             </div>
 
+                            {/* Max calories */} 
+                            <div className="flex flex-col gap-2 w-[140px]">
+                                <label className={formStyles.label}>Max Calories</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={filterMaxCalories}
+                                        onChange={(e) => setFilterMaxCalories(e.target.value)}
+                                        placeholder="Any"
+                                        className={`${formStyles.input} !py-2 !px-3 !pr-14`}
+                                    />
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold">
+                                        cal
+                                    </span>
+                                </div>
+                            </div>
+
                             {/* Restrictions Dropdown */}
                             <div className="relative flex flex-col gap-2 min-w-[180px]">
                                 <label className={formStyles.label}>Dietary tag</label>
@@ -457,18 +488,26 @@ export default function SearchPage() {
                         {filteredRecipes.length === 0 ? (
                             <div className="text-center font-bold text-stone-500 py-10 normal-case">No results found.</div>
                         ) : (
-                            filteredRecipes.map((recipe) => (
-                                <li
-                                    key={recipe.id}
-                                    onClick={() => setSelectedRecipe(recipe)}
-                                    className={formStyles.cardListItem}
-                                >
-                                    <h2 className="font-black text-xl mb-1">{recipe.title}</h2>
-                                    <p className={formStyles.label + " mb-0"}>
-                                        ⏱ {recipe.prep_time} min • ⭐ {recipe.difficulty}/5 • 💰 ${recipe.cost}
-                                    </p>
-                                </li>
-                            ))
+                            filteredRecipes.map((recipe) => {
+                                // for the calories, prep time, ingredients , etc
+                                const totalCalories = (recipe.ingredients || []).reduce(
+                                    (sum, ing) => sum + (Number(ing.calories) || 0),
+                                    0
+                                );
+
+                                return (
+                                    <li
+                                        key={recipe.id}
+                                        onClick={() => setSelectedRecipe(recipe)}
+                                        className={formStyles.cardListItem}
+                                    >
+                                        <h2 className="font-black text-xl mb-1">{recipe.title}</h2>
+                                        <p className={formStyles.label + " mb-0"}>
+                                            ⏱ {recipe.prep_time} min • ⭐ {recipe.difficulty}/5 • 💰 ${recipe.cost} • 🔥 {totalCalories} cal
+                                        </p>
+                                    </li>
+                                );
+                            })
                         )}
                     </ul>
                 </div>
@@ -496,6 +535,13 @@ export default function SearchPage() {
                             <h2 className={layoutStyles.pageTitle + " w-full text-center"}>
                                 {selectedRecipe.title}
                             </h2>
+
+                             <p className={formStyles.label + " text-center mb-2"}>
+                                🔥 {(selectedRecipe.ingredients || []).reduce(
+                                    (sum, ing) => sum + (Number(ing.calories) || 0),
+                                    0
+                                )} cal
+                            </p>
 
                             <p className={formStyles.label + " text-center mb-6"}>
                                 ⏱ {selectedRecipe.prep_time}m • ⭐ Level {selectedRecipe.difficulty} • 💰 ${selectedRecipe.cost}
