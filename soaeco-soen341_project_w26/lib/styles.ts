@@ -41,6 +41,10 @@ export const formStyles = {
 
   helperStatText:
     "text-[10px] font-black uppercase tracking-widest text-stone-500",
+
+  inputSuffix:
+    "absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold pointer-events-none",
+
 };
 
 // Page layout styles

@@ -352,7 +352,7 @@ export default function SearchPage() {
                                         value={filterMaxCalories ?? ""}
                                         onChange={(e) => setFilterMaxCalories(e.target.value)
                                         }
-                                        placeholder="No limit"
+                                        placeholder="Any"
                                         className={`${formStyles.input} !py-2 !px-3 !pr-14`}
                                     />
                                     <span className={formStyles.inputSuffix}>
