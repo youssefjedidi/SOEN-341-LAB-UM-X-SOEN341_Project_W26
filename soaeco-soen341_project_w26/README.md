@@ -32,6 +32,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Planner updates are handled through Next.js server actions in [`app/weekly_planner/actions.ts`](./app/weekly_planner/actions.ts).
 - Duplicate recipe assignments are validated across the full week using recipe IDs from the database.
 - The planner UI loads available recipes from the `recipes` table and persists add, replace, and remove actions.
+- Weekly auto-generation fills all 28 slots (7 days x 4 meals) with non-repeating recipes.
+- Generation is enabled only when enough eligible recipes exist for all slots.
+- When a daily calorie goal is set, generation tries to keep each day near that goal and applies profile dietary restrictions.
+- When no daily calorie goal is set, generation uses all recipes (no restriction filter for auto-generation).
+- Minimal coverage for this behavior is in `tests/4.3.weekly_planner.generation.test.ts`.
 
 ## Useful Scripts
 

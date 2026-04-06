@@ -177,6 +177,8 @@ export default function WeeklyPlanner() {
     return synonyms[key] ?? key;
   };
 
+  // Product rule: dietary restrictions are enforced for auto-generation only
+  // when a daily calorie goal is configured.
   const calorieRestrictedGeneration = Boolean(dailyGoal && dailyGoal > 0);
 
   const requiredRestrictions = useMemo(
@@ -307,6 +309,8 @@ const weeklyGoal = useMemo(() => {
       return a.title.localeCompare(b.title);
     });
 
+    // Greedy per-slot picker: select the remaining recipe whose calories are
+    // closest to the slot target while never reusing a recipe.
     const pickBestRecipe = (targetCalories: number | null) => {
       if (unusedRecipes.length === 0) {
         return null;
@@ -336,6 +340,8 @@ const weeklyGoal = useMemo(() => {
 
     const generatedSlots: GeneratedMealSlot[] = [];
 
+    // Fill every day/meal slot, updating the remaining daily budget after
+    // each pick so later slots stay near the configured daily limit.
     for (const day of days) {
       let remainingDayCalories =
         calorieRestrictedGeneration && dailyGoal && dailyGoal > 0 ? dailyGoal : null;
