@@ -73,8 +73,7 @@ export default function SearchPage() {
                 }));
 
                 setRecipes(formatted);
-            } catch (err) {
-                console.error("Error fetching recipes:", err);
+            } catch {
                 setRecipes([]);
             }
         }
