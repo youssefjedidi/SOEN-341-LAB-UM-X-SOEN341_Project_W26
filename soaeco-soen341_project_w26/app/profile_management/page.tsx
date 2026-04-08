@@ -53,13 +53,11 @@ export default function ProfileManagement() {
 
          if (error) {
             // If error is "no rows returned", that's expected for new users
-            if (error.code === 'PGRST116' || error.message?.includes('no rows')) {
-               console.log('No existing profile found - user will create one on first save');
-            } else {
-               console.error('Failed to load preferences:', error);
+            if (error.code !== 'PGRST116' && !error.message?.includes('no rows')) {
+              setError('Failed to load preferences');
             }
-            return;
-         }
+        return;
+        }
 
          if (data) {
          const savedRestrictions = data.dietary_restrictions || [];

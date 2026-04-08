@@ -24,7 +24,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     try {
     // Call Supabase to Login the User
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+    const {error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
     });
@@ -36,15 +36,11 @@ const handleSubmit = async (e: React.FormEvent) => {
         return;
     }
 
-    // Login successful!
-    console.log('User Logged In:', data.user);
-
     // Redirect to home page
     router.push('/search_page');
 
-    } catch (error) {
+    } catch  {
         //Handle unexpected errors
-        console.error("Login error:", error);
         setError('An unexpected error occurred. Please try again.');
         setLoading(false);
     }
@@ -70,8 +66,7 @@ const handleForgotPassword = async () => {
         } else {
             setResetSent(true);
         }
-    } catch (error) {
-        console.error('Password reset error:', error);
+    } catch  {
         setError('Failed to send reset email. Please try again.');
     } finally {
         setLoading(false);
