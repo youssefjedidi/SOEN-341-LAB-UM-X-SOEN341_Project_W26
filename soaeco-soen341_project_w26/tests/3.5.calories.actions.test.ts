@@ -2,19 +2,23 @@
  * @jest-environment node
  */
 
-const mockSelectAll = jest.fn();
+jest.mock('../lib/supabase', () => {
+    const mockSelectAll = jest.fn();
 
-const mockFrom = jest.fn(() => ({
-    select: mockSelectAll,
-}));
-
-jest.mock('../lib/supabase', () => ({
-    supabaseAdmin: {
-        from: mockFrom,
-    },
-}));
+    return {
+        supabaseAdmin: {
+            from: jest.fn(() => ({
+                select: mockSelectAll,
+            })),
+            __mockSelectAll: mockSelectAll,
+        },
+    };
+});
 
 import { getRecipes } from '../app/recipe/actions';
+import { supabaseAdmin } from '../lib/supabase';
+
+const mockSelectAll = (supabaseAdmin as any).__mockSelectAll;
 
 type SuccessResult = {
     success: true;
