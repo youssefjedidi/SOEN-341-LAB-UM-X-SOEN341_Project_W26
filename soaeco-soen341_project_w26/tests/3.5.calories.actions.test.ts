@@ -3,17 +3,23 @@
  */
 
 const mockSelectAll = jest.fn();
+
 const mockFrom = jest.fn(() => ({
     select: mockSelectAll,
 }));
 
 jest.mock('../lib/supabase', () => ({
     supabaseAdmin: {
-        from: () => mockFrom(),
+        from: (...args: unknown[]) => mockFrom(...args),
     },
 }));
 
 import { getRecipes } from '../app/recipe/actions';
+
+type SuccessResult = {
+    success: true;
+    recipes: { total_calories: number }[];
+};
 
 describe('3.5 Calorie backend user story', () => {
     beforeEach(() => {
@@ -37,7 +43,9 @@ describe('3.5 Calorie backend user story', () => {
         const result = await getRecipes();
 
         expect(result.success).toBe(true);
-        const recipes = result.recipes as any[];
+
+        const recipes = (result as SuccessResult).recipes;
+
         expect(recipes[0].total_calories).toBe(500);
     });
 
@@ -60,7 +68,8 @@ describe('3.5 Calorie backend user story', () => {
 
         expect(result.success).toBe(true);
 
-        const recipes = result.recipes as any[];
+        const recipes = (result as SuccessResult).recipes;
+
         expect(recipes[0].total_calories).toBe(0);
         expect(recipes[1].total_calories).toBe(0);
     });
