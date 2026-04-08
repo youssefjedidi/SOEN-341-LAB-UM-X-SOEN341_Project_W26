@@ -159,7 +159,8 @@ export default function WeeklyPlanner() {
   }, [availableRecipes]);
 
   const normalizeRestriction = (value: string) => {
-    const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
+if (!value) return "";
+const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
     const synonyms: Record<string, string> = {
       none: "none",
