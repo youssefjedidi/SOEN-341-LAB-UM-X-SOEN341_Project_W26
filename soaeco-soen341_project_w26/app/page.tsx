@@ -14,9 +14,7 @@ export default function Home() {
     try {
       await supabase.auth.signOut();
       router.push('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+    } catch {}
   };
 
   // Show loading state while checking authentication

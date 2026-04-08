@@ -73,8 +73,7 @@ export default function SearchPage() {
                 }));
 
                 setRecipes(formatted);
-            } catch (err) {
-                console.error("Error fetching recipes:", err);
+            } catch {
                 setRecipes([]);
             }
         }
@@ -167,11 +166,14 @@ export default function SearchPage() {
     // filtering (text search is now handled by backend!)
     const filteredRecipes = recipes.filter((recipe) => {
         // sum calories to filter
-               const totalCalories = (recipe.ingredients || []).reduce(
-            (sum, ing) => sum + (Number(ing.calories) || 0),
+        const totalCalories = (recipe.ingredients || []).reduce(
+            (sum, ing) => {
+                const calories = Number(ing.calories);
+                return sum + (Number.isFinite(calories) ? calories : 0);
+            },
             0
         );
-       
+
         // Difficulty filter (show recipes at or below selected difficulty;
         // exclude recipes with no difficulty set when filter is active)
         if (appliedDifficulty > 0 && (!recipe.difficulty || recipe.difficulty > appliedDifficulty)) return false;
@@ -183,7 +185,12 @@ export default function SearchPage() {
         if (appliedMaxTime !== "" && recipe.prep_time > parseInt(appliedMaxTime)) return false;
 
         // Max calories filter
-        if (appliedMaxCalories !== "" && totalCalories > parseFloat(appliedMaxCalories)) {
+        const maxCalories = parseFloat(appliedMaxCalories);
+
+        const isMaxCaloriesValid =
+            appliedMaxCalories !== "" && Number.isFinite(maxCalories);
+
+        if (isMaxCaloriesValid && totalCalories > maxCalories) {
             return false;
         }
 
@@ -331,18 +338,23 @@ export default function SearchPage() {
                                 </div>
                             </div>
 
-                            {/* Max calories */} 
+                            {/* Max calories */}
                             <div className="flex flex-col gap-2 w-[140px]">
-                                <label className={formStyles.label}>Max Calories</label>
+                                <label htmlFor="maxCalories" className={formStyles.label}>
+                                    Max Calories
+                                </label>
+
                                 <div className="relative">
                                     <input
+                                        id="maxCalories"
                                         type="number"
-                                        value={filterMaxCalories}
-                                        onChange={(e) => setFilterMaxCalories(e.target.value)}
+                                        value={filterMaxCalories ?? ""}
+                                        onChange={(e) => setFilterMaxCalories(e.target.value)
+                                        }
                                         placeholder="Any"
                                         className={`${formStyles.input} !py-2 !px-3 !pr-14`}
                                     />
-                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold">
+                                    <span className={formStyles.inputSuffix}>
                                         cal
                                     </span>
                                 </div>
@@ -537,7 +549,7 @@ export default function SearchPage() {
                                 {selectedRecipe.title}
                             </h2>
 
-                             <p className={formStyles.label + " text-center mb-2"}>
+                            <p className={formStyles.label + " text-center mb-2"}>
                                 🔥 {(selectedRecipe.ingredients || []).reduce(
                                     (sum, ing) => sum + (Number(ing.calories) || 0),
                                     0
