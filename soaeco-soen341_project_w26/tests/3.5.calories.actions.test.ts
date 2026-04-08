@@ -2,28 +2,21 @@
  * @jest-environment node
  */
 
-jest.mock('../lib/supabase', () => {
-    const mockSelectAll = jest.fn();
+const mockSelectAll = jest.fn();
 
+function mockFrom(_table: string) {
     return {
-        supabaseAdmin: {
-            from: jest.fn(() => ({
-                select: mockSelectAll,
-            })),
-            __mockSelectAll: mockSelectAll,
-        },
+        select: mockSelectAll,
     };
-});
+}
+
+jest.mock('../lib/supabase', () => ({
+    supabaseAdmin: {
+        from: (table: string) => mockFrom(table),
+    },
+}));
 
 import { getRecipes } from '../app/recipe/actions';
-import { supabaseAdmin } from '../lib/supabase';
-
-const mockSelectAll = (supabaseAdmin as any).__mockSelectAll;
-
-type SuccessResult = {
-    success: true;
-    recipes: { total_calories: number }[];
-};
 
 describe('3.5 Calorie backend user story', () => {
     beforeEach(() => {
@@ -46,11 +39,10 @@ describe('3.5 Calorie backend user story', () => {
 
         const result = await getRecipes();
 
-        expect(result.success).toBe(true);
-
-        const recipes = (result as SuccessResult).recipes;
-
-        expect(recipes[0].total_calories).toBe(500);
+        expect(result).toMatchObject({
+            success: true,
+            recipes: [expect.objectContaining({ total_calories: 500 })],
+        });
     });
 
     it('returns 0 total calories when ingredients are missing or empty', async () => {
@@ -70,11 +62,12 @@ describe('3.5 Calorie backend user story', () => {
 
         const result = await getRecipes();
 
-        expect(result.success).toBe(true);
-
-        const recipes = (result as SuccessResult).recipes;
-
-        expect(recipes[0].total_calories).toBe(0);
-        expect(recipes[1].total_calories).toBe(0);
+        expect(result).toMatchObject({
+            success: true,
+            recipes: [
+                expect.objectContaining({ total_calories: 0 }),
+                expect.objectContaining({ total_calories: 0 }),
+            ],
+        });
     });
 });
