@@ -22,7 +22,8 @@ import { createEmptyPlannerGrid } from "@/lib/weeklyPlanner";
 //Meal type slots and days
 type MealType = PlannerMealType;
 type DayType = PlannerDayType;
-
+// Normalized structure for generated planner slots so that
+// the auto-generation logic can consistently assign recipes across days and meals.
 type GeneratedMealSlot = {
   day: DayType;
   meal: MealType;
