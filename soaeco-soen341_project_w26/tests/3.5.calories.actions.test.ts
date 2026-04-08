@@ -10,7 +10,7 @@ const mockFrom = jest.fn(() => ({
 
 jest.mock('../lib/supabase', () => ({
     supabaseAdmin: {
-        from: (...args: unknown[]) => mockFrom(...args),
+        from: mockFrom,
     },
 }));
 
