@@ -1,13 +1,14 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import RecipePage from '../app/recipe/page';
-import { Recipe } from '../lib/types';
+import { IngredientCatalogItem, Recipe } from '../lib/types';
 
 const mockUseAuth = jest.fn();
 const mockCreateRecipe = jest.fn();
 const mockGetRecipes = jest.fn();
 const mockDeleteRecipe = jest.fn();
 const mockUpdateRecipe = jest.fn();
+const mockFetch = jest.fn();
 
 jest.mock('../lib/useAuth', () => ({
   useAuth: () => mockUseAuth(),
@@ -22,6 +23,13 @@ jest.mock('../app/recipe/actions', () => ({
 
 describe('2.1 Recipe management page user story', () => {
   const userId = 'user-123';
+  const pastaIngredient: IngredientCatalogItem = {
+    id: 'ingredient-pasta',
+    name: 'Pasta, cooked',
+    calories_per_100g: 131,
+    source: 'CNF 2015',
+    source_food_id: 1234,
+  };
 
   function getFieldContainer(label: RegExp) {
     const labelElement = screen.getByText(label);
@@ -47,12 +55,6 @@ describe('2.1 Recipe management page user story', () => {
   function fillValidRecipeForm() {
     fireEvent.change(getInputBySectionLabel(/recipe title/i), { target: { value: 'Pasta Primavera' } });
     fireEvent.change(getInputBySectionLabel(/prep time/i), { target: { value: '25' } });
-
-    const ingredientsSection = getFieldContainer(/ingredients/i);
-    const ingredientInput = ingredientsSection.querySelector('input') as HTMLInputElement;
-    fireEvent.change(ingredientInput, { target: { value: 'Pasta' } });
-    fireEvent.click(within(ingredientsSection).getByRole('button', { name: /add/i }));
-
     fireEvent.change(getInputBySectionLabel(/cost/i), { target: { value: '12' } });
     fireEvent.change(getTextareaBySectionLabel(/prep steps/i), {
       target: { value: 'Boil pasta, sauté vegetables, then combine.' },
@@ -61,6 +63,7 @@ describe('2.1 Recipe management page user story', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    global.fetch = mockFetch as unknown as typeof fetch;
 
     mockUseAuth.mockReturnValue({
       user: { id: userId },
@@ -77,6 +80,10 @@ describe('2.1 Recipe management page user story', () => {
       recipe: { id: 'updated-1' },
     });
     mockDeleteRecipe.mockResolvedValue({ success: true, data: [] });
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => [pastaIngredient],
+    });
   });
 
   it('renders create recipe form, required controls, and recipe list section', async () => {
@@ -114,13 +121,28 @@ describe('2.1 Recipe management page user story', () => {
     render(React.createElement(RecipePage));
 
     fillValidRecipeForm();
+    const ingredientInput = screen.getByPlaceholderText(/search ingredients/i);
+    fireEvent.change(ingredientInput, { target: { value: 'Pasta' } });
+
+    const ingredientResult = await screen.findByRole('button', { name: /pasta, cooked/i });
+    fireEvent.click(ingredientResult);
+
+    const gramsSection = getFieldContainer(/grams/i);
+    const gramsInput = gramsSection.querySelector('input') as HTMLInputElement;
+    fireEvent.change(gramsInput, { target: { value: '150' } });
     fireEvent.click(screen.getByRole('button', { name: /save recipe/i }));
 
     await waitFor(() => {
       expect(mockCreateRecipe).toHaveBeenCalledWith({
         title: 'Pasta Primavera',
         prep_time: 25,
-        ingredients: [{ name: 'Pasta', calories: 0 }],
+        ingredients: [{
+          ingredient_id: 'ingredient-pasta',
+          name: 'Pasta, cooked',
+          grams: 150,
+          calories_per_100g: 131,
+          calories: 196.5,
+        }],
         restrictions: [],
         cost: 12,
         preparation_steps: 'Boil pasta, sauté vegetables, then combine.',
@@ -140,7 +162,13 @@ describe('2.1 Recipe management page user story', () => {
       id: 'recipe-42',
       title: 'Original Soup',
       prep_time: 10,
-      ingredients: [{ name: 'Water', calories: 0 }],
+      ingredients: [{
+        ingredient_id: 'ingredient-water',
+        name: 'Water',
+        grams: 100,
+        calories_per_100g: 0,
+        calories: 0,
+      }],
       restrictions: ['Vegan'],
       cost: 4,
       preparation_steps: 'Heat water.',
@@ -168,7 +196,13 @@ describe('2.1 Recipe management page user story', () => {
         expect.objectContaining({
           title: 'Updated Soup',
           prep_time: 10,
-          ingredients: [{ name: 'Water', calories: 0 }],
+          ingredients: [{
+            ingredient_id: 'ingredient-water',
+            name: 'Water',
+            grams: 100,
+            calories_per_100g: 0,
+            calories: 0,
+          }],
           restrictions: ['Vegan'],
           cost: 4,
           prep_steps: 'Heat water.',
@@ -183,7 +217,13 @@ describe('2.1 Recipe management page user story', () => {
       id: 'recipe-cancel',
       title: 'Cancel Me',
       prep_time: 15,
-      ingredients: [{ name: 'Tomato', calories: 0 }],
+      ingredients: [{
+        ingredient_id: 'ingredient-tomato',
+        name: 'Tomato',
+        grams: 100,
+        calories_per_100g: 18,
+        calories: 18,
+      }],
       restrictions: [],
       cost: 7,
       preparation_steps: 'Mix ingredients.',
@@ -215,7 +255,13 @@ describe('2.1 Recipe management page user story', () => {
       id: 'recipe-delete',
       title: 'Delete Me',
       prep_time: 30,
-      ingredients: [{ name: 'Rice', calories: 0 }],
+      ingredients: [{
+        ingredient_id: 'ingredient-rice',
+        name: 'Rice',
+        grams: 100,
+        calories_per_100g: 130,
+        calories: 130,
+      }],
       restrictions: [],
       cost: 5,
       preparation_steps: 'Cook rice.',

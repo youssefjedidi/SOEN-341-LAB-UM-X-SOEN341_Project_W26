@@ -51,8 +51,20 @@ describe('2.1 Recipe backend actions user story', () => {
       title: 'Stir Fry',
       prep_time: 20,
       ingredients: [
-        { name: 'Noodles', calories: 0 },
-        { name: 'Vegetables', calories: 0 },
+        {
+          ingredient_id: null,
+          name: 'Noodles',
+          grams: null,
+          calories_per_100g: null,
+          calories: 0,
+        },
+        {
+          ingredient_id: null,
+          name: 'Vegetables',
+          grams: null,
+          calories_per_100g: null,
+          calories: 0,
+        },
       ],
       restrictions: ['Vegan'],
       tags: [],
@@ -64,7 +76,11 @@ describe('2.1 Recipe backend actions user story', () => {
 
     expect(result).toEqual({
       success: true,
-      recipe: { id: 'recipe-1' },
+      recipe: {
+        id: 'recipe-1',
+        ingredients: [],
+        total_calories: 0,
+      },
     });
   });
 
@@ -83,7 +99,15 @@ describe('2.1 Recipe backend actions user story', () => {
     expect(mockUpdate).toHaveBeenCalledWith({
       title: 'Updated Stir Fry',
       preparation_steps: 'New instructions',
-      ingredients: [{ name: 'Noodles', calories: 0 }],
+      ingredients: [
+        {
+          ingredient_id: null,
+          name: 'Noodles',
+          grams: null,
+          calories_per_100g: null,
+          calories: 0,
+        },
+      ],
       restrictions: [],
       prep_time: 25,
       cost: 11,
@@ -94,7 +118,11 @@ describe('2.1 Recipe backend actions user story', () => {
 
     expect(result).toEqual({
       success: true,
-      recipe: { id: 'recipe-1' },
+      recipe: {
+        id: 'recipe-1',
+        ingredients: [],
+        total_calories: 0,
+      },
     });
   });
 
