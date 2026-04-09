@@ -14,9 +14,9 @@ const parseOptionalNumber = (value: unknown): number | null => {
 };
 
 export const normalizeIngredient = (ingredient: IngredientLike): Ingredient | null => {
-  if (!ingredient) {
-    return null;
-  }
+if (ingredient === null || ingredient === undefined) {
+  return null;
+}
 
   if (typeof ingredient === "string") {
     return {
