@@ -1,6 +1,17 @@
 export interface Ingredient {
+  ingredient_id?: string | null;
   name: string;
+  grams?: number | null;
+  calories_per_100g?: number | null;
   calories: number;
+}
+
+export interface IngredientCatalogItem {
+  id: string;
+  name: string;
+  calories_per_100g: number;
+  source?: string;
+  source_food_id?: number;
 }
 
 export interface Recipe {
@@ -15,6 +26,7 @@ export interface Recipe {
   difficulty: number;
   user_id: string;
   created_at?: string;
+  total_calories?: number;
 }
 
 export type PlannerMealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
