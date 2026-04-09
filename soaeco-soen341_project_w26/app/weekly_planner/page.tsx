@@ -22,6 +22,13 @@ import { createEmptyPlannerGrid } from "@/lib/weeklyPlanner";
 //Meal type slots and days
 type MealType = PlannerMealType;
 type DayType = PlannerDayType;
+// Normalized structure for generated planner slots so that
+// the auto-generation logic can consistently assign recipes across days and meals.
+type GeneratedMealSlot = {
+  day: DayType;
+  meal: MealType;
+  recipeId: string;
+};
 
 const days: DayType[] = [
   "Monday",
@@ -45,6 +52,7 @@ export default function WeeklyPlanner() {
     createEmptyPlannerGrid(),
   );
   const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
+  const [dietaryRestrictions, setDietaryRestrictions] = useState<string[]>([]);
   const [isPlannerLoading, setIsPlannerLoading] = useState(true);
   const [isSaving, startSavingTransition] = useTransition();
   const [infoMessage, setInfoMessage] = useState("");
@@ -70,6 +78,7 @@ export default function WeeklyPlanner() {
       if (!user) {
         setPlanner(createEmptyPlannerGrid());
         setAvailableRecipes([]);
+        setDietaryRestrictions([]);
         setDailyGoal(null);
         setIsPlannerLoading(false);
         return;
@@ -83,6 +92,7 @@ export default function WeeklyPlanner() {
       if (!accessToken) {
         setPlanner(createEmptyPlannerGrid());
         setAvailableRecipes([]);
+        setDietaryRestrictions([]);
         setErrorMessage("You must be logged in to load your planner.");
         setDailyGoal(null);
         setIsPlannerLoading(false);
@@ -94,7 +104,7 @@ export default function WeeklyPlanner() {
         getRecipes(),
         supabase
           .from("user_profiles")
-          .select("daily_calorie_goal")
+          .select("daily_calorie_goal, dietary_restrictions")
           .eq("user_id", user.id)
           .single(),
       ]);
@@ -118,7 +128,10 @@ export default function WeeklyPlanner() {
       }
 
       const savedGoal = goalResult.data?.daily_calorie_goal ?? null;
+      const savedRestrictions = goalResult.data?.dietary_restrictions ?? [];
+
       setDailyGoal(savedGoal);
+      setDietaryRestrictions(Array.isArray(savedRestrictions) ? savedRestrictions : []);
       setIsPlannerLoading(false);
     }
 
@@ -144,6 +157,59 @@ export default function WeeklyPlanner() {
 
     return titles;
   }, [availableRecipes]);
+
+  const normalizeRestriction = (value: string) => {
+if (!value) return "";
+const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+    const synonyms: Record<string, string> = {
+      none: "none",
+      nutallergy: "nutfree",
+      nutfree: "nutfree",
+      shellfishallergy: "shellfishfree",
+      shellfishfree: "shellfishfree",
+      dairyfree: "dairyfree",
+      glutenfree: "glutenfree",
+      halal: "halal",
+      kosher: "kosher",
+      vegan: "vegan",
+      vegetarian: "vegetarian",
+    };
+
+    return synonyms[key] ?? key;
+  };
+
+  // Product rule: dietary restrictions are enforced for auto-generation only
+  // when a daily calorie goal is configured.
+  const calorieRestrictedGeneration = Boolean(dailyGoal && dailyGoal > 0);
+
+  const requiredRestrictions = useMemo(
+    () =>
+      calorieRestrictedGeneration
+        ? dietaryRestrictions
+            .map((restriction) => normalizeRestriction(restriction))
+            .filter((restriction) => restriction && restriction !== "none")
+        : [],
+    [calorieRestrictedGeneration, dietaryRestrictions],
+  );
+
+  const eligibleRecipesForGeneration = useMemo(() => {
+    if (requiredRestrictions.length === 0) {
+      return availableRecipes;
+    }
+
+    return availableRecipes.filter((recipe) => {
+      const recipeRestrictionSet = new Set(
+        (recipe.restrictions ?? []).map((restriction) =>
+          normalizeRestriction(restriction),
+        ),
+      );
+
+      return requiredRestrictions.every((restriction) =>
+        recipeRestrictionSet.has(restriction),
+      );
+    });
+  }, [availableRecipes, requiredRestrictions]);
 
   const recipeCaloriesById = useMemo(() => {
     const calories = new Map<string, number>();
@@ -219,6 +285,99 @@ export default function WeeklyPlanner() {
   const weeklyGoal = useMemo(() => {
     return dailyGoal != null ? dailyGoal * DAYS_IN_WEEK : null;
   }, [dailyGoal]);
+
+  const totalMealSlots = days.length * meals.length;
+  const canGenerateWeeklyPlan = eligibleRecipesForGeneration.length >= totalMealSlots;
+
+  const buildGeneratedMealPlan = (): GeneratedMealSlot[] | null => {
+    if (!canGenerateWeeklyPlan) {
+      return null;
+    }
+
+    const recipeCalories = new Map(
+      eligibleRecipesForGeneration.map((recipe) => {
+        const totalCalories =
+          recipe.ingredients?.reduce(
+            (sum: number, ingredient: { calories?: number | string }) =>
+              sum + (Number(ingredient.calories) || 0),
+            0,
+          ) || 0;
+
+        return [recipe.id, totalCalories];
+      }),
+    );
+
+    const unusedRecipes = [...eligibleRecipesForGeneration].sort((a, b) => {
+      const calorieDiff = (recipeCalories.get(a.id) ?? 0) - (recipeCalories.get(b.id) ?? 0);
+      if (calorieDiff !== 0) {
+        return calorieDiff;
+      }
+
+      return a.title.localeCompare(b.title);
+    });
+
+    // Greedy per-slot picker: select the remaining recipe whose calories are
+    // closest to the slot target while never reusing a recipe.
+    const pickBestRecipe = (targetCalories: number | null) => {
+      if (unusedRecipes.length === 0) {
+        return null;
+      }
+
+      if (targetCalories === null || targetCalories <= 0) {
+        return unusedRecipes.shift() ?? null;
+      }
+
+      let bestIndex = 0;
+      let bestScore = Number.POSITIVE_INFINITY;
+
+      for (let index = 0; index < unusedRecipes.length; index += 1) {
+        const recipe = unusedRecipes[index];
+        const calories = recipeCalories.get(recipe.id) ?? 0;
+        const score = Math.abs(calories - targetCalories);
+
+        if (score < bestScore) {
+          bestScore = score;
+          bestIndex = index;
+        }
+      }
+
+      const [selectedRecipe] = unusedRecipes.splice(bestIndex, 1);
+      return selectedRecipe ?? null;
+    };
+
+    const generatedSlots: GeneratedMealSlot[] = [];
+
+    // Fill every day/meal slot, updating the remaining daily budget after
+    // each pick so later slots stay near the configured daily limit.
+    for (const day of days) {
+      let remainingDayCalories =
+        calorieRestrictedGeneration && dailyGoal && dailyGoal > 0 ? dailyGoal : null;
+      let remainingSlots = meals.length;
+
+      for (const meal of meals) {
+        const targetCalories =
+          remainingDayCalories !== null && remainingSlots > 0
+            ? remainingDayCalories / remainingSlots
+            : null;
+
+        const selectedRecipe = pickBestRecipe(targetCalories);
+
+        if (!selectedRecipe) {
+          return null;
+        }
+
+        generatedSlots.push({ day, meal, recipeId: selectedRecipe.id });
+
+        if (remainingDayCalories !== null) {
+          remainingDayCalories -= recipeCalories.get(selectedRecipe.id) ?? 0;
+        }
+
+        remainingSlots -= 1;
+      }
+    }
+
+    return generatedSlots;
+  };
 
   //Determine wether weekly goald is defined and valid
   const isGoalValid = weeklyGoal != null && weeklyGoal > 0;
@@ -350,6 +509,61 @@ export default function WeeklyPlanner() {
 
       setPlanner(result.grid);
       setInfoMessage(result.message);
+    });
+  };
+
+  const handleGenerateWeeklyPlan = () => {
+    if (!user) {
+      setErrorMessage("You must be logged in to generate your planner.");
+      return;
+    }
+
+    const generatedPlan = buildGeneratedMealPlan();
+
+    if (!generatedPlan) {
+      setErrorMessage(
+        `At least ${totalMealSlots} non-repeating recipes are required to generate a full week.`,
+      );
+      return;
+    }
+
+    setErrorMessage("");
+
+    startSavingTransition(async () => {
+      const accessToken = await getAccessToken();
+
+      if (!accessToken) {
+        setErrorMessage("You must be logged in to generate your planner.");
+        return;
+      }
+
+      const resetResult = await resetWeeklyPlanner(accessToken);
+
+      if (!resetResult.success || !resetResult.grid) {
+        setErrorMessage(resetResult.message);
+        return;
+      }
+
+      let latestGrid = resetResult.grid;
+
+      for (const slot of generatedPlan) {
+        const updateResult = await updateWeeklyPlannerMeal({
+          accessToken,
+          dayOfWeek: slot.day,
+          mealType: slot.meal,
+          recipeId: slot.recipeId,
+        });
+
+        if (!updateResult.success || !updateResult.grid) {
+          setErrorMessage(updateResult.message);
+          return;
+        }
+
+        latestGrid = updateResult.grid;
+      }
+
+      setPlanner(latestGrid);
+      setInfoMessage("Weekly meal plan generated successfully.");
     });
   };
 
@@ -552,19 +766,40 @@ export default function WeeklyPlanner() {
         </div>
       </div>
 
-      {/* Reset Weekly Planner Button */}
-      <div className="w-full flex justify-end mt-10">
-        <button
-          type="button"
-          onClick={handleResetPlanner}
-          className={formStyles.button}
-        >
-          Reset Weekly Planner
-        </button>
-      </div>
-      {isModalOpen && selectedDay && selectedMeal && (
-        <>
-          <div className={layoutStyles.modalOverlay} onClick={closeModal} />
+  {/* Reset Weekly Planner Button */}
+  <div className="w-full flex justify-end mt-10">
+    <button
+      type="button"
+      onClick={handleGenerateWeeklyPlan}
+      disabled={isPlannerLoading || isSaving || !canGenerateWeeklyPlan}
+      className={formStyles.button}
+      title={
+        canGenerateWeeklyPlan
+          ? "Generate a full non-repeating weekly meal plan"
+          : `Need ${totalMealSlots - eligibleRecipesForGeneration.length} more recipes to generate`
+      }
+    >
+      {isSaving ? "Generating..." : "Generate Weekly Plan"}
+    </button>
+
+    <button
+      type="button"
+      onClick={handleResetPlanner}
+      disabled={isPlannerLoading || isSaving}
+      className={formStyles.button}
+    >
+      Reset Weekly Planner
+    </button>
+  </div>
+
+  {!canGenerateWeeklyPlan && (
+    <p className={formStyles.statusMessage}>
+      Need at least {totalMealSlots} eligible non-repeating recipes for generation.
+    </p>
+  )}
+    {isModalOpen && selectedDay && selectedMeal && (
+      <>
+        <div className={layoutStyles.modalOverlay} onClick={closeModal} />
 
           <div className={layoutStyles.modalWrapper}>
             <div
