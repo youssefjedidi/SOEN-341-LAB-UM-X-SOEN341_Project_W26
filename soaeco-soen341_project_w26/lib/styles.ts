@@ -45,6 +45,21 @@ export const formStyles = {
   inputSuffix:
     "absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-bold pointer-events-none",
 
+  searchResults:
+    "mt-2 rounded-2xl border-2 border-stone-900 bg-white p-2 shadow-[4px_4px_0px_#1c1917] max-h-56 overflow-y-auto",
+
+  searchResultButton:
+    "w-full rounded-xl border-2 border-transparent px-3 py-3 text-left transition-colors hover:border-stone-900 hover:bg-stone-50",
+
+  ingredientRow:
+    "rounded-2xl border-2 border-stone-200 bg-stone-50 p-4",
+
+  ingredientMeta:
+    "text-[11px] font-black uppercase tracking-widest text-stone-500",
+
+  ingredientValue:
+    "text-sm font-black text-stone-900",
+
 };
 
 // Page layout styles
