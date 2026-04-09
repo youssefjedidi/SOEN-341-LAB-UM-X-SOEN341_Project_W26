@@ -114,7 +114,8 @@ export function IngredientSelector({
     const grams = value === "" ? null : Number(value);
     const updatedIngredients = [...ingredients];
     const current = updatedIngredients[index];
-    const safeGrams = grams !== null && Number.isFinite(grams) ? grams : null;
+const safeGrams =
+  grams !== null && Number.isFinite(grams) && grams >= 0 ? grams : null;
 
     updatedIngredients[index] = {
       ...current,
