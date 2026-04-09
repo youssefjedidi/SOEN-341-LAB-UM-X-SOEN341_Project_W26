@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import RecipePage from '../app/recipe/page';
 import { IngredientCatalogItem, Recipe } from '../lib/types';
 
