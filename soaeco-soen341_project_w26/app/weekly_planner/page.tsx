@@ -217,11 +217,11 @@ export default function WeeklyPlanner() {
 
   // Computes weekly target based on user-defined daily goal
   const weeklyGoal = useMemo(() => {
-    return dailyGoal != null ? dailyGoal * DAYS_IN_WEEK : null;
+    return dailyGoal !== null ? dailyGoal * DAYS_IN_WEEK : null;
   }, [dailyGoal]);
 
   //Determine wether weekly goald is defined and valid
-  const isGoalValid = weeklyGoal != null && weeklyGoal > 0;
+  const isGoalValid = weeklyGoal !== null && weeklyGoal > 0;
 
   //Computes the average daily calories over the week
   const averageCalories = weeklyTotalCalories / DAYS_IN_WEEK;

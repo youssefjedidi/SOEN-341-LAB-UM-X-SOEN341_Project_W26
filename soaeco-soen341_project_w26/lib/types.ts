@@ -28,11 +28,3 @@ export type PlannerDayType =
   | "Saturday"
   | "Sunday";
 
-export type WeeklyPlannerGrid = {
-  [day in PlannerDayType]: {
-    [meal in PlannerMealType]: {
-      recipeId: string | null;
-      recipeTitle: string | null;
-    };
-  };
-};
