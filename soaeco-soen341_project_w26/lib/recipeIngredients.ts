@@ -27,7 +27,7 @@ if (ingredient === null || ingredient === undefined) {
       calories: 0,
     };
   }
-
+// Normalize and validate ingredient name to ensure consistent formatting
   const name = typeof ingredient.name === "string" ? ingredient.name.trim() : "";
   if (!name) {
     return null;
