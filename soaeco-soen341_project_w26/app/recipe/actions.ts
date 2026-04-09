@@ -90,9 +90,9 @@ export const updateRecipe = async (
     updateData.prep_time = data.prep_time;
   }
 
-  if (data.ingredients) {
-    updateData.ingredients = normalizeIngredients(data.ingredients);
-  }
+if (data.ingredients !== undefined) {
+  updateData.ingredients = normalizeIngredients(data.ingredients);
+}
 
   if (data.restrictions !== undefined) {
     updateData.restrictions = data.restrictions;
