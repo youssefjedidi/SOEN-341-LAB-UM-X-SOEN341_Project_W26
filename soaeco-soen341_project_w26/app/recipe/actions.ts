@@ -79,14 +79,37 @@ export const updateRecipe = async (
   },
 ) => {
   if (!supabaseAdmin) return { success: false, error: "Server error" };
-  const updateData: Partial<Recipe> & { preparation_steps?: string; prep_steps?: string } = { ...data };
+
+  const updateData: Partial<Recipe> & { preparation_steps?: string } = {};
+
+  if (data.title !== undefined) {
+    updateData.title = data.title;
+  }
+
+  if (data.prep_time !== undefined) {
+    updateData.prep_time = data.prep_time;
+  }
+
   if (data.ingredients) {
     updateData.ingredients = normalizeIngredients(data.ingredients);
   }
+
+  if (data.restrictions !== undefined) {
+    updateData.restrictions = data.restrictions;
+  }
+
+  if (data.cost !== undefined) {
+    updateData.cost = data.cost;
+  }
+
   if (data.prep_steps) {
     updateData.preparation_steps = data.prep_steps;
-    delete updateData.prep_steps;
   }
+
+  if (data.difficulty !== undefined) {
+    updateData.difficulty = data.difficulty;
+  }
+
   // Ensure tags are always included (even empty array)
   updateData.tags = data.tags ?? [];
   const { data: recipe, error } = await supabaseAdmin
