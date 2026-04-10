@@ -75,6 +75,22 @@ The current migration set also provisions the weekly planner backend:
 - planner rows are protected with row-level security policies
 - recipe assignments can be safely added, replaced, or cleared by rerunning `npm run setup-db`
 
+## Ingredient Catalog Import
+
+Sprint 4 adds a searchable `ingredients` table for recipe calorie calculation.
+
+After running database migrations, import the Canadian Nutrient File ingredient catalog with:
+
+```bash
+npm run import-cnf-ingredients
+```
+
+The importer downloads the official CNF CSV archive, extracts the food and calorie data, and upserts it into Supabase. If you already have the archive locally, you can pass its path directly:
+
+```bash
+node scripts/import-cnf-ingredients.js /path/to/cnf-fcen-csv.zip
+```
+
 ---
 
 ## Troubleshooting
