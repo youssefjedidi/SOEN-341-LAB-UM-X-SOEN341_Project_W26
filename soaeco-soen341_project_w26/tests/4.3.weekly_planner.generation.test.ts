@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import WeeklyPlanner from '../app/weekly_planner/page';
-import { PlannerDayType, PlannerMealType, Recipe, WeeklyPlannerGrid } from '../lib/types';
+import WeeklyPlanner from '../src/app/weekly_planner/page';
+import { PlannerDayType, PlannerMealType, Recipe, WeeklyPlannerGrid } from '../src/lib/types';
 
 const mockGetWeeklyPlanner = jest.fn();
 const mockUpdateWeeklyPlannerMeal = jest.fn();
@@ -11,21 +11,21 @@ const mockUseAuth = jest.fn();
 const mockGetSession = jest.fn();
 const mockSingle = jest.fn();
 
-jest.mock('../app/weekly_planner/actions', () => ({
+jest.mock('../src/app/weekly_planner/actions', () => ({
   getWeeklyPlanner: (...args: unknown[]) => mockGetWeeklyPlanner(...args),
   updateWeeklyPlannerMeal: (...args: unknown[]) => mockUpdateWeeklyPlannerMeal(...args),
   resetWeeklyPlanner: (...args: unknown[]) => mockResetWeeklyPlanner(...args),
 }));
 
-jest.mock('../app/recipe/actions', () => ({
+jest.mock('../src/app/recipe/actions', () => ({
   getRecipes: (...args: unknown[]) => mockGetRecipes(...args),
 }));
 
-jest.mock('../lib/useAuth', () => ({
+jest.mock('../src/lib/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
   supabase: {
     auth: {
       getSession: (...args: unknown[]) => mockGetSession(...args),

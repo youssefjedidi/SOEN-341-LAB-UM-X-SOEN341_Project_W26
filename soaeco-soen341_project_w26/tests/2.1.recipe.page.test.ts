@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import RecipePage from '../app/recipe/page';
-import { IngredientCatalogItem, Recipe } from '../lib/types';
+import RecipePage from '../src/app/recipe/page';
+import { IngredientCatalogItem, Recipe } from '../src/lib/types';
 
 const mockUseAuth = jest.fn();
 const mockCreateRecipe = jest.fn();
@@ -10,11 +10,11 @@ const mockDeleteRecipe = jest.fn();
 const mockUpdateRecipe = jest.fn();
 const mockFetch = jest.fn();
 
-jest.mock('../lib/useAuth', () => ({
+jest.mock('../src/lib/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock('../app/recipe/actions', () => ({
+jest.mock('../src/app/recipe/actions', () => ({
   createRecipe: (...args: unknown[]) => mockCreateRecipe(...args),
   getRecipes: (...args: unknown[]) => mockGetRecipes(...args),
   deleteRecipe: (...args: unknown[]) => mockDeleteRecipe(...args),

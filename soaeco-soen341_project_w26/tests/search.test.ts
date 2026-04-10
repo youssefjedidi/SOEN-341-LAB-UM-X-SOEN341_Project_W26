@@ -1,11 +1,11 @@
 /**
  * @jest-environment node
  */
-import { GET } from '../app/api/search/route';
-import { supabase } from '../lib/supabase';
+import { GET } from '../src/app/api/search/route';
+import { supabase } from '../src/lib/supabase';
 
 // Mock the Supabase client
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
   supabase: {
     rpc: jest.fn(),
   },

@@ -1,4 +1,4 @@
-import { filterRecipesBySearch } from "../app/utils/recipeUtils";
+import { filterRecipesBySearch } from "../src/app/utils/recipeUtils";
 
 const mockRecipes = [
   { id: "1", title: "Chicken Pasta" },

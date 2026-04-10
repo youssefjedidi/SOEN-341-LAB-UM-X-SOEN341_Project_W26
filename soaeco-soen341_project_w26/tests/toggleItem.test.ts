@@ -1,4 +1,4 @@
-import { toggleItem } from "../app/utils/recipeUtils";
+import { toggleItem } from "../src/app/utils/recipeUtils";
 
 
 test("adds item when not present", () => {

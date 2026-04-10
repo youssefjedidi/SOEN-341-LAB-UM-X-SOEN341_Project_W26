@@ -10,13 +10,13 @@ function mockFrom(_table: string) {
     };
 }
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
     supabaseAdmin: {
         from: (table: string) => mockFrom(table),
     },
 }));
 
-import { getRecipes } from '../app/recipe/actions';
+import { getRecipes } from '../src/app/recipe/actions';
 
 describe('3.5 Calorie backend user story', () => {
     beforeEach(() => {

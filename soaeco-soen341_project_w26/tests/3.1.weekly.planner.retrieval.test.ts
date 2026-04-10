@@ -1,11 +1,11 @@
 /**
  * @jest-environment node
  */
-import { getWeeklyPlanner } from "../app/weekly_planner/actions";
-import { getPlannerRowsForUser } from "../lib/weeklyPlanner";
-import { supabase } from "../lib/supabase";
+import { getWeeklyPlanner } from "../src/app/weekly_planner/actions";
+import { getPlannerRowsForUser } from "../src/lib/weeklyPlanner";
+import { supabase } from "../src/lib/supabase";
 
-jest.mock("../lib/supabase", () => ({
+jest.mock("../src/lib/supabase", () => ({
   supabase: {
     auth: {
       getUser: jest.fn(),
@@ -16,8 +16,8 @@ jest.mock("../lib/supabase", () => ({
   },
 }));
 
-jest.mock("../lib/weeklyPlanner", () => {
-  const actual = jest.requireActual("../lib/weeklyPlanner");
+jest.mock("../src/lib/weeklyPlanner", () => {
+  const actual = jest.requireActual("../src/lib/weeklyPlanner");
 
   return {
     ...actual,

@@ -1,10 +1,10 @@
 /**
  * @jest-environment node
  */
-import { createRecipe, getRecipes, searchIngredients, updateRecipe } from "../app/recipe/actions";
-import { supabaseAdmin } from "../lib/supabase";
+import { createRecipe, getRecipes, searchIngredients, updateRecipe } from "../src/app/recipe/actions";
+import { supabaseAdmin } from "../src/lib/supabase";
 
-jest.mock("../lib/supabase", () => ({
+jest.mock("../src/lib/supabase", () => ({
   supabaseAdmin: {
     from: jest.fn(),
     rpc: jest.fn(),
