@@ -1,12 +1,12 @@
 /**
  * @jest-environment node
  */
-import { createEmptyPlannerGrid } from "../lib/weeklyPlanner";
+import { createEmptyPlannerGrid } from "../src/lib/weeklyPlanner";
 import {
   applyRecipeToPlanner,
   removeRecipeFromPlanner,
   resetPlannerGrid,
-} from "../lib/weeklyPlannerUi";
+} from "../src/lib/weeklyPlannerUi";
 
 describe("3.3 add remove planned recipe frontend state changes", () => {
   it("adds a recipe to the selected planner slot", () => {
