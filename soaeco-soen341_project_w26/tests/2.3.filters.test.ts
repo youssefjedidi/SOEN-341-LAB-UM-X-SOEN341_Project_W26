@@ -4,7 +4,7 @@ import SearchPage from '../src/app/search_page/page';
 
 const mockPush = jest.fn();
 const mockSelect = jest.fn();
-const mockFrom = jest.fn((...args: any[]) => ({
+const mockFrom = jest.fn((..._args: unknown[]) => ({
   select: mockSelect,
 }));
 

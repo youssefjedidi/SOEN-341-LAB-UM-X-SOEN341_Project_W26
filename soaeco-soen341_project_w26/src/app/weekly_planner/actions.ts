@@ -70,6 +70,7 @@ const getPlannerRowsWithAuth = async (accessToken: string) => {
     const { data, error } = await getPlannerRowsForUser(supabaseAdmin, authResult.user.id);
 
     if (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to retrieve weekly planner:", error);
         return {
             success: false as const,
@@ -207,6 +208,7 @@ export const updateWeeklyPlannerMeal = async (input: {
             .maybeSingle();
 
         if (recipeError) {
+            // eslint-disable-next-line no-console
             console.error("Failed to validate recipe for weekly planner:", recipeError);
             return {
                 success: false,
@@ -231,6 +233,7 @@ export const updateWeeklyPlannerMeal = async (input: {
     });
 
     if (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to update weekly planner:", error);
         return {
             success: false,
@@ -277,6 +280,7 @@ export const resetWeeklyPlanner = async (
     .eq("user_id", userId);
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to reset weekly planner:", error);
     return {
       success: false,

@@ -13,7 +13,7 @@ const mockUpdate = jest.fn(() => ({ eq: mockUpdateEq }));
 const mockInsert = jest.fn();
 const mockUpsert = jest.fn();
 const mockSelect = jest.fn(() => ({ eq: jest.fn(() => ({ single: mockSingle })) }));
-const mockFrom = jest.fn((...args: any[]) => ({
+const mockFrom = jest.fn((..._args: unknown[]) => ({
   select: mockSelect,
   update: mockUpdate,
   insert: mockInsert,

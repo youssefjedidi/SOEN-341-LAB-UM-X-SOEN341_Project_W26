@@ -42,6 +42,7 @@ export function useAuth() {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error checking user:', error);
       setUser(null);
     } finally {

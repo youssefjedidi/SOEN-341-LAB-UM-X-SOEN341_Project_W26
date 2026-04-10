@@ -67,10 +67,12 @@ export default function RegisterPage() {
                 return;
             }
 
+            // eslint-disable-next-line no-console
             console.log('User Registered:', data.user);
             router.push('/profile_management');
 
         } catch (error) {
+            // eslint-disable-next-line no-console
             console.error("Registration error:", error);
             setSubmitError('An unexpected error occurred. Please try again.');
             setLoading(false);

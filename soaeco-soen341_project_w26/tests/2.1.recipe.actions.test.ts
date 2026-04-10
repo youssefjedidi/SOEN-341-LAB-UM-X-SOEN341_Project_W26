@@ -9,7 +9,7 @@ const mockInsert = jest.fn(() => ({ select: mockSelect }));
 const mockUpdate = jest.fn(() => ({ eq: mockEq }));
 const mockDeleteEq = jest.fn();
 const mockDelete = jest.fn(() => ({ eq: mockDeleteEq }));
-const mockFrom = jest.fn((...args: any[]) => ({
+const mockFrom = jest.fn((..._args: unknown[]) => ({
   insert: mockInsert,
   update: mockUpdate,
   delete: mockDelete,
