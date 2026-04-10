@@ -1,9 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/useAuth';
-import { supabase } from '@/lib/supabase';
-import { layoutStyles, formStyles } from '@/lib/styles';
+import { useAuth } from '@/src/lib/useAuth';
+import { supabase } from '@/src/lib/supabase';
+import { layoutStyles, formStyles } from '@/src/lib/styles';
 
 export default function Home() {
   const { user, loading } = useAuth();

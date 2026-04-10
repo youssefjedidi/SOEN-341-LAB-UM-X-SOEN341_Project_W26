@@ -1,23 +1,23 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { formStyles, layoutStyles } from "@/lib/styles";
+import { formStyles, layoutStyles } from "@/src/lib/styles";
 import {
   getWeeklyPlanner,
   updateWeeklyPlannerMeal,
   resetWeeklyPlanner,
 } from "./actions";
 import { useEffect } from "react";
-import { useAuth } from "@/lib/useAuth";
-import { supabase } from "@/lib/supabase";
-import { getRecipes } from "@/app/recipe/actions";
+import { useAuth } from "@/src/lib/useAuth";
+import { supabase } from "@/src/lib/supabase";
+import { getRecipes } from "@/src/app/recipe/actions";
 import type {
   PlannerDayType,
   PlannerMealType,
   Recipe,
   WeeklyPlannerGrid,
-} from "@/lib/types";
-import { createEmptyPlannerGrid } from "@/lib/weeklyPlanner";
+} from "@/src/lib/types";
+import { createEmptyPlannerGrid } from "@/src/lib/weeklyPlanner";
 
 //Meal type slots and days
 type MealType = PlannerMealType;

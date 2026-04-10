@@ -1,10 +1,10 @@
 'use client'
 
 import { useRouter } from "next/navigation";
-import { layoutStyles, formStyles } from '@/lib/styles';
+import { layoutStyles, formStyles } from '@/src/lib/styles';
 import { useState, useRef, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { toggleItem } from '@/app/utils/recipeUtils';
+import { supabase } from "@/src/lib/supabase";
+import { toggleItem } from '@/src/app/utils/recipeUtils';
 
 type Ingredient = {
     name: string;

@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { IngredientSelector } from "@/components/IngredientSelector";
-import { formStyles, layoutStyles } from "@/lib/styles";
+import { IngredientSelector } from "@/src/components/IngredientSelector";
+import { formStyles, layoutStyles } from "@/src/lib/styles";
 import { createRecipe, deleteRecipe, getRecipes, updateRecipe } from "./actions";
-import { useAuth } from "@/lib/useAuth";
-import { Ingredient, Recipe } from "@/lib/types";
+import { useAuth } from "@/src/lib/useAuth";
+import { Ingredient, Recipe } from "@/src/lib/types";
 
 export default function RecipePage() {
   const [prepTime, setPrepTime] = useState("");

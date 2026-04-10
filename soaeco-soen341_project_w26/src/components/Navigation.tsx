@@ -3,8 +3,8 @@
 import Link from "next/link";
 
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/lib/useAuth";
-import { layoutStyles } from "@/lib/styles";
+import { useAuth } from "@/src/lib/useAuth";
+import { layoutStyles } from "@/src/lib/styles";
 
 export function Navigation() {
   const { user, loading } = useAuth();

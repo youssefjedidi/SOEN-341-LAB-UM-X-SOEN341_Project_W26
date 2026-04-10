@@ -9,19 +9,19 @@ const mockInsert = jest.fn(() => ({ select: mockSelect }));
 const mockUpdate = jest.fn(() => ({ eq: mockEq }));
 const mockDeleteEq = jest.fn();
 const mockDelete = jest.fn(() => ({ eq: mockDeleteEq }));
-const mockFrom = jest.fn(() => ({
+const mockFrom = jest.fn((...args: any[]) => ({
   insert: mockInsert,
   update: mockUpdate,
   delete: mockDelete,
 }));
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
   supabaseAdmin: {
     from: (...args: unknown[]) => mockFrom(...args),
   },
 }));
 
-import { createRecipe, updateRecipe, deleteRecipe } from '../app/recipe/actions';
+import { createRecipe, updateRecipe, deleteRecipe } from '../src/app/recipe/actions';
 
 describe('2.1 Recipe backend actions user story', () => {
   beforeEach(() => {

@@ -1,8 +1,8 @@
 "use client";
 
 import { Dispatch, SetStateAction, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { formStyles } from "@/lib/styles";
-import { Ingredient, IngredientCatalogItem } from "@/lib/types";
+import { formStyles } from "@/src/lib/styles";
+import { Ingredient, IngredientCatalogItem } from "@/src/lib/types";
 
 type IngredientSelectorProps = {
   ingredients: Ingredient[];

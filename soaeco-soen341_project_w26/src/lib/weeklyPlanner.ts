@@ -3,7 +3,7 @@ import type {
   PlannerDayType,
   PlannerMealType,
   WeeklyPlannerGrid,
-} from "@/lib/types";
+} from "@/src/lib/types";
 
 export const PLANNER_DAYS: PlannerDayType[] = [
   "Monday",

@@ -1,11 +1,11 @@
 "use server";
 
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/src/lib/supabase";
 import type {
     PlannerDayType,
     PlannerMealType,
     WeeklyPlannerGrid,
-} from "@/lib/types";
+} from "@/src/lib/types";
 import {
     applyPlannerUpdate,
     formatPlannerRowsAsGrid,
@@ -14,7 +14,7 @@ import {
     isValidPlannerDay,
     isUuidLike,
     type WeeklyPlannerRow,
-} from "@/lib/weeklyPlanner";
+} from "@/src/lib/weeklyPlanner";
 
 
 const getAuthenticatedPlannerUser = async (accessToken: string) => {

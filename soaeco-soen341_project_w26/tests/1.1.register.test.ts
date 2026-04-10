@@ -1,12 +1,12 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import RegisterPage from '../app/register/page';
-import { supabase } from '../lib/supabase';
+import RegisterPage from '../src/app/register/page';
+import { supabase } from '../src/lib/supabase';
 
 const mockPush = jest.fn();
 const mockSignUp = jest.fn();
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
   supabase: {
     auth: {
       signUp: (...args: unknown[]) => mockSignUp(...args),

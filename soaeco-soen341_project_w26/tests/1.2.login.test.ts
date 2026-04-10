@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import LoginPage from '../app/login/page';
+import LoginPage from '../src/app/login/page';
 
 const mockPush = jest.fn();
 const mockSignInWithPassword = jest.fn();
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
 	supabase: {
 		auth: {
 			signInWithPassword: (...args: unknown[]) => mockSignInWithPassword(...args),

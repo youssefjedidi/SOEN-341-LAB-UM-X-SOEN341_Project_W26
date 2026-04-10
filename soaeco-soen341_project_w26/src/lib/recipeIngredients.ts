@@ -1,4 +1,4 @@
-import { Ingredient } from "@/lib/types";
+import { Ingredient } from "@/src/lib/types";
 
 type IngredientLike = Partial<Ingredient> | string | null | undefined;
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import SearchPage from '../app/search_page/page';
+import SearchPage from '../src/app/search_page/page';
 
 const mockPush = jest.fn();
 const mockSelect = jest.fn();
-const mockFrom = jest.fn(() => ({
+const mockFrom = jest.fn((...args: any[]) => ({
   select: mockSelect,
 }));
 const fetchMock = jest.fn();
@@ -15,7 +15,7 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
   supabase: {
     from: (...args: unknown[]) => mockFrom(...args),
   },

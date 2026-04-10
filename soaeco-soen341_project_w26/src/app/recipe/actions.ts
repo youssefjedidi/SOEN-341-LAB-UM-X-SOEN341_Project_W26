@@ -1,8 +1,8 @@
 "use server";
 
-import { supabaseAdmin } from "@/lib/supabase";
-import { Ingredient, IngredientCatalogItem, Recipe } from "@/lib/types";
-import { calculateRecipeTotalCalories, normalizeIngredients } from "@/lib/recipeIngredients";
+import { supabaseAdmin } from "@/src/lib/supabase";
+import { Ingredient, IngredientCatalogItem, Recipe } from "@/src/lib/types";
+import { calculateRecipeTotalCalories, normalizeIngredients } from "@/src/lib/recipeIngredients";
 
 type RecipeIngredientInput = Partial<Ingredient>;
 

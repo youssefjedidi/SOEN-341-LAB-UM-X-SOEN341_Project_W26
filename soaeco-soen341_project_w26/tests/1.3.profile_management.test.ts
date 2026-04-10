@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import ProfileManagement from '../app/profile_management/page';
+import ProfileManagement from '../src/app/profile_management/page';
 
 const mockPush = jest.fn();
 const mockUseAuth = jest.fn();
@@ -13,18 +13,18 @@ const mockUpdate = jest.fn(() => ({ eq: mockUpdateEq }));
 const mockInsert = jest.fn();
 const mockUpsert = jest.fn();
 const mockSelect = jest.fn(() => ({ eq: jest.fn(() => ({ single: mockSingle })) }));
-const mockFrom = jest.fn(() => ({
+const mockFrom = jest.fn((...args: any[]) => ({
   select: mockSelect,
   update: mockUpdate,
   insert: mockInsert,
   upsert: mockUpsert,
 }));
 
-jest.mock('../lib/useAuth', () => ({
+jest.mock('../src/lib/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock('../lib/supabase', () => ({
+jest.mock('../src/lib/supabase', () => ({
   supabase: {
     from: (...args: unknown[]) => mockFrom(...args),
   },

@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Navigation } from '../components/Navigation';
+import { Navigation } from '../src/components/Navigation';
 
 const mockUseAuth = jest.fn();
 const mockUsePathname = jest.fn();
 
-jest.mock('../lib/useAuth', () => ({
+jest.mock('../src/lib/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }));
 

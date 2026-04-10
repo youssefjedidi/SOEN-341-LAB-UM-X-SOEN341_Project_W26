@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/lib/useAuth';
-import { formStyles, layoutStyles } from '@/lib/styles';
+import { supabase } from '@/src/lib/supabase';
+import { useAuth } from '@/src/lib/useAuth';
+import { formStyles, layoutStyles } from '@/src/lib/styles';
 
 // Available options
 const INITIAL_DIETARY_RESTRICTIONS = ['None', 'Halal', 'Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Nut Allergy', 'Shellfish Allergy', 'Kosher'];
