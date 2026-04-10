@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { createEmptyPlannerGrid } from "../lib/weeklyPlanner";
+import { createEmptyPlannerGrid } from "../src/lib/weeklyPlanner";
 import {
   applyRecipeToPlanner,
   getFilledPlannerSlotsCount,
