@@ -1,13 +1,13 @@
 /**
  * @jest-environment node
  */
-import { createEmptyPlannerGrid } from "../lib/weeklyPlanner";
+import { createEmptyPlannerGrid } from "../src/lib/weeklyPlanner";
 import {
   applyRecipeToPlanner,
   getFilledPlannerSlotsCount,
   getPlannerSlotCount,
   isPlannerSlotEmpty,
-} from "../lib/weeklyPlannerUi";
+} from "../src/lib/weeklyPlannerUi";
 
 describe("3.1 weekly planner frontend ui state", () => {
   it("starts with 28 empty planner slots", () => {

@@ -1,13 +1,13 @@
 /**
  * @jest-environment node
  */
-import { createEmptyPlannerGrid } from "../lib/weeklyPlanner";
+import { createEmptyPlannerGrid } from "../src/lib/weeklyPlanner";
 import {
   applyRecipeToPlanner,
   canAddRecipeToPlanner,
   getUsedRecipeIds,
   isRecipeAlreadyUsed,
-} from "../lib/weeklyPlannerUi";
+} from "../src/lib/weeklyPlannerUi";
 
 describe("3.2 integrated daily meal planner frontend duplicate tracking", () => {
   it("collects all used recipe ids currently assigned in the week", () => {
