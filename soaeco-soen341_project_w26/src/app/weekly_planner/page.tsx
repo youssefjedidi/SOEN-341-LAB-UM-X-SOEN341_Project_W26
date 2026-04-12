@@ -30,6 +30,7 @@ type GeneratedMealSlot = {
   recipeId: string;
 };
 
+const LOGIN_ERROR_MESSAGE = "You must be logged in to generate your planner.";
 const days: DayType[] = [
   "Monday",
   "Tuesday",
@@ -93,7 +94,7 @@ export default function WeeklyPlanner() {
         setPlanner(createEmptyPlannerGrid());
         setAvailableRecipes([]);
         setDietaryRestrictions([]);
-        setErrorMessage("You must be logged in to load your planner.");
+        setErrorMessage(LOGIN_ERROR_MESSAGE);
         setDailyGoal(null);
         setIsPlannerLoading(false);
         return;
@@ -418,7 +419,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
   const handleAddRecipe = (recipe: Recipe) => {
     if (!selectedDay || !selectedMeal) return;
     if (!user) {
-      setErrorMessage("You must be logged in to update your planner.");
+      setErrorMessage(LOGIN_ERROR_MESSAGE);
       return;
     }
 
@@ -433,7 +434,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
       const accessToken = await getAccessToken();
 
       if (!accessToken) {
-        setErrorMessage("You must be logged in to update your planner.");
+        setErrorMessage(LOGIN_ERROR_MESSAGE);
         return;
       }
 
@@ -457,7 +458,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   const handleRemoveRecipe = (day: DayType, meal: MealType) => {
     if (!user) {
-      setErrorMessage("You must be logged in to update your planner.");
+      setErrorMessage(LOGIN_ERROR_MESSAGE);
       return;
     }
 
@@ -465,7 +466,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
       const accessToken = await getAccessToken();
 
       if (!accessToken) {
-        setErrorMessage("You must be logged in to update your planner.");
+        setErrorMessage(LOGIN_ERROR_MESSAGE);
         return;
       }
 
@@ -488,7 +489,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
   // Resets the entire weekly planner (backend + frontend sync)
   const handleResetPlanner = () => {
     if (!user) {
-      setErrorMessage("You must be logged in to update your planner.");
+      setErrorMessage(LOGIN_ERROR_MESSAGE);
       return;
     }
 
@@ -496,7 +497,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
       const accessToken = await getAccessToken();
 
       if (!accessToken) {
-        setErrorMessage("You must be logged in to update your planner.");
+        setErrorMessage(LOGIN_ERROR_MESSAGE);
         return;
       }
 
@@ -514,7 +515,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   const handleGenerateWeeklyPlan = () => {
     if (!user) {
-      setErrorMessage("You must be logged in to generate your planner.");
+      setErrorMessage(LOGIN_ERROR_MESSAGE);
       return;
     }
 
@@ -533,7 +534,7 @@ const key = value.toLowerCase().replace(/[^a-z0-9]/g, "");
       const accessToken = await getAccessToken();
 
       if (!accessToken) {
-        setErrorMessage("You must be logged in to generate your planner.");
+        setErrorMessage(LOGIN_ERROR_MESSAGE);
         return;
       }
 

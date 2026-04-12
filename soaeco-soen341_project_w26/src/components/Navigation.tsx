@@ -16,7 +16,11 @@ export function Navigation() {
 
   // Hide nav on certain pure auth pages if desired, but since it's user bound, typically we only show it when logged in anyway.
   // Still, let's make sure it doesn't show on login/register if they somehow have a leftover session
-  if (pathname === "/login" || pathname === "/register" || pathname === "/reset-password") {
+  if (
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/reset_password"
+  ) {
     return null;
   }
 
